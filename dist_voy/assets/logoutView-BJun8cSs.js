@@ -1,1 +1,0 @@
-import{_ as t,A as o,k as s,C as c,S as a}from"./index-Cf4ZT5av.js";const r={class:"bg window-height window-width row justify-center items-center text-white text-h3 text-weight-medium"},n={__name:"logoutView",setup(i){const{clearuser:e}=o();return s(()=>{e()}),(_,d)=>(c(),a("div",r," Deslogueado "))}},w=t(n,[["__scopeId","data-v-dd69c6a6"]]);export{w as default};

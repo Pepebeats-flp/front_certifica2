@@ -1,1 +1,0 @@
-import{_ as t,A as s,k as o,C as c,S as a}from"./index-C6y55vCJ.js";const n={class:"bg window-height window-width row justify-center items-center text-white text-h3 text-weight-medium"},r={__name:"noaccessView",setup(i){const{clearuser:e}=s();return o(()=>{e()}),(_,d)=>(c(),a("div",n," Desautorizado "))}},w=t(r,[["__scopeId","data-v-27798766"]]);export{w as default};

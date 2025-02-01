@@ -1,1 +1,0 @@
-import{g as r,av as i,o as s,ap as a}from"./index-hp-wV5Lg.js";function l(){let e=null;const o=r();function t(){e!==null&&(clearTimeout(e),e=null)}return i(t),s(t),{removeTimeout:t,registerTimeout(n,u){t(),a(o)===!1&&(e=setTimeout(()=>{e=null,n()},u))}}}export{l as u};
