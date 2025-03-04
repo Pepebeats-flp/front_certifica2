@@ -160,25 +160,13 @@
               </q-item-section>
               <q-item-section> Solicitud Repuestos</q-item-section>
             </q-item>
-            <q-item
-              v-if="showMenu()"
-              clickable
-              v-ripple
-              active-class="tab-active"
-              to="/soplocRa"
-            >
+            <q-item clickable v-ripple active-class="tab-active" to="/soplocRa">
               <q-item-section avatar>
                 <q-icon name="chevron_right"></q-icon>
               </q-item-section>
               <q-item-section> Solicitud Reparación</q-item-section>
             </q-item>
-            <q-item
-              v-if="showMenu()"
-              clickable
-              v-ripple
-              active-class="tab-active"
-              to="/soplocD"
-            >
+            <q-item clickable v-ripple active-class="tab-active" to="/soplocD">
               <q-item-section avatar>
                 <q-icon name="chevron_right"></q-icon>
               </q-item-section>
@@ -354,8 +342,6 @@ if (!carro) {
   bindinsp();
   bindinspp();
   bindinfo();
-  binddiag();
-  bindrepa();
   bindposicion();
   bindtec();
   bindinc();
@@ -365,8 +351,10 @@ if (!carro) {
   bindrepres();
 }
 
-//General
+//General (perfil carroceria tiene acceso a Repuesto, Reparación y Diagnostico)
 bindrepu();
+bindrepa();
+binddiag();
 binduser();
 
 onUnmounted(() => {

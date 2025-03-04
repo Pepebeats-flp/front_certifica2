@@ -22,9 +22,9 @@ export default defineConfig({
         "images/google_logo.svg",
       ],
       manifest: {
-        name: "Voy Certifica",
-        short_name: "Voy Certifica",
-        description: "Voy Certifica",
+        name: "Metropol Certifica",
+        short_name: "Metropol Certifica",
+        description: "Metropol Certifica",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [

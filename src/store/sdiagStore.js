@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
+import { useUserStore } from "@/store/userStore";
 import { unidad_negocio_arr, client } from "@/client";
 import { ref } from "vue";
 import { db, functions } from "@/firebase";
@@ -82,12 +83,23 @@ export const useSdiagStore = defineStore("sdiagStore", () => {
     }
   };
   const bind = () => {
-    const q = query(
-      collection(db, "solicitud_diagnostico"),
-      where("unidad_negocio", "in", unidad_negocio_arr),
-      where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
-    );
+    const { carro } = useUserStore();
+    let q = "";
+    if (carro)
+      q = query(
+        collection(db, "solicitud_diagnostico"),
+        where("unidad_negocio", "in", unidad_negocio_arr),
+        where("dominio", "==", "0"), //Carroceria
+        where("timestamp", ">", timestamp.value),
+        orderBy("timestamp")
+      );
+    else
+      q = query(
+        collection(db, "solicitud_diagnostico"),
+        where("unidad_negocio", "in", unidad_negocio_arr),
+        where("timestamp", ">", timestamp.value),
+        orderBy("timestamp")
+      );
     unsubscribe = onSnapshot(
       q,
       (snapshot) => {

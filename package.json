@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "cp -a unique/redbus/. . && vite",
+    "dev:redbus": "cp -a unique/redbus/. . && vite",
+    "dev:metropol": "cp -a unique/metropol/. . && vite",
     "build:metropol": "rm -rf dist_metropol && cp -a unique/metropol/. . && vite build && mv dist dist_metropol",
     "build:redbus": "rm -rf dist_redbus && cp -a unique/redbus/. . && vite build && mv dist dist_redbus",
     "build:subus": "rm -rf dist_subus && cp -a unique/subus/. . && vite build && mv dist dist_subus",
