@@ -119,14 +119,14 @@ export const useEstadogStore = defineStore("estadogStore", () => {
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("estado", "in", [1, 2, 3]),
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     else
       q = query(
         collection(db, "estado_general"),
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     unsubscribe = onSnapshot(
       q,
@@ -143,8 +143,8 @@ export const useEstadogStore = defineStore("estadogStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const bind_p = () => {

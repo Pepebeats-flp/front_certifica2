@@ -16,9 +16,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icons/favicon.ico", "icons/apple-touch-icon.png", "images/*.webp", "images/avatar.png", "images/google_logo.svg"],
       manifest: {
-        name: "GranAmericas Certifica",
-        short_name: "GranAmericas Certifica",
-        description: "GranAmericas Certifica",
+        name: "Voy Certifica",
+        short_name: "Voy Certifica",
+        description: "Voy Certifica",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [
@@ -48,6 +48,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,woff,woff2}"],
+        navigateFallbackDenylist: [
+          // Exclude routes starting with /api/
+          /^\/api\//,
+        ],
       },
     }),
   ],

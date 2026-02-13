@@ -4,19 +4,7 @@ import { unidad_negocio_arr, client } from "@/client";
 import { ref } from "vue";
 import { db, functions } from "@/firebase";
 import { httpsCallable } from "firebase/functions";
-import {
-  doc,
-  setDoc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-  updateDoc,
-  serverTimestamp,
-  getDocsFromCache,
-  orderBy,
-  limit,
-} from "firebase/firestore";
+import { doc, setDoc, collection, query, where, onSnapshot, updateDoc, serverTimestamp, getDocsFromCache, orderBy, limit } from "firebase/firestore";
 export const useRepresStore = defineStore("represStore", () => {
   const m_change = ref(0);
   let unsubscribe = () => {};
@@ -65,8 +53,7 @@ export const useRepresStore = defineStore("represStore", () => {
     m_change.value++;
   };
   const bind = async () => {
-    //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
-    //Pero la fecha queda guardada.. al refrescar no quedan datos
+    //Si no hay nada en cache reiniciamos fecha
     const empty = await emptycache();
     if (empty) timestamp.value = date;
 
@@ -74,7 +61,7 @@ export const useRepresStore = defineStore("represStore", () => {
       collection(db, "registro_presencial"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -82,8 +69,7 @@ export const useRepresStore = defineStore("represStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_change.value++;
@@ -91,8 +77,8 @@ export const useRepresStore = defineStore("represStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();

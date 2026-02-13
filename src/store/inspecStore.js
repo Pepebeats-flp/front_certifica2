@@ -110,7 +110,7 @@ export const useInspecStore = defineStore("inspecStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
+        //timestamp.value = date;
       }
     );
   };

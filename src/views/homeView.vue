@@ -1,14 +1,25 @@
 <template>
   <div class="row justify-center">
+    <div class="col-12 flex justify-center">
+      <q-card v-if="showDashboard" bordered class="my-card-double q-ma-md text-center">
+        <q-card-section>
+          <div class="text-h6">Dashboard Cumplimiento</div>
+
+          <div class="iframe-container">
+            <iframe
+              src="https://lookerstudio.google.com/embed/reporting/9f83d30b-6200-40b4-bf3e-76cb68066111/page/p_l1vaxcuu0d"
+              frameborder="0"
+              allowfullscreen
+              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+            ></iframe>
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
+
     <q-card bordered class="my-card q-ma-md text-center">
       <q-card-section>
-        <q-inner-loading
-          :showing="loading"
-          label="Cargando..."
-          label-class="text-primary"
-          label-style="font-size: 0.9em"
-          color="primary"
-        />
+        <q-inner-loading :showing="loading" label="Cargando..." label-class="text-primary" label-style="font-size: 0.9em" color="primary" />
         <div class="text-h6">Estado General</div>
         <q-scroll-area style="height: 300px; max-width: 600px">
           <canvas style="min-width: 560px" id="eg"></canvas>
@@ -17,13 +28,7 @@
     </q-card>
     <q-card bordered class="my-card q-ma-md text-center">
       <q-card-section>
-        <q-inner-loading
-          :showing="loading"
-          label="Cargando..."
-          label-class="text-primary"
-          label-style="font-size: 0.9em"
-          color="primary"
-        />
+        <q-inner-loading :showing="loading" label="Cargando..." label-class="text-primary" label-style="font-size: 0.9em" color="primary" />
         <div class="text-h6">Inspección Técnica</div>
         <q-scroll-area style="height: 300px; max-width: 600px">
           <canvas style="min-width: 560px" id="it"></canvas>
@@ -32,13 +37,7 @@
     </q-card>
     <q-card bordered class="my-card q-ma-md text-center">
       <q-card-section>
-        <q-inner-loading
-          :showing="loading"
-          label="Cargando..."
-          label-class="text-primary"
-          label-style="font-size: 0.9em"
-          color="primary"
-        />
+        <q-inner-loading :showing="loading" label="Cargando..." label-class="text-primary" label-style="font-size: 0.9em" color="primary" />
         <div class="text-h6">Mantenimiento Preventivo</div>
         <q-scroll-area style="height: 300px; max-width: 600px">
           <canvas style="min-width: 560px" id="mp"></canvas>
@@ -47,13 +46,7 @@
     </q-card>
     <q-card bordered class="my-card q-ma-md text-center">
       <q-card-section>
-        <q-inner-loading
-          :showing="loading"
-          label="Cargando..."
-          label-class="text-primary"
-          label-style="font-size: 0.9em"
-          color="primary"
-        />
+        <q-inner-loading :showing="loading" label="Cargando..." label-class="text-primary" label-style="font-size: 0.9em" color="primary" />
         <div class="text-h6">No Aprobado - Deposito</div>
         <div id="map" class="map"></div>
       </q-card-section>
@@ -63,17 +56,21 @@
 <script setup>
 import { useIndicadorStore } from "@/store/indicaStore";
 import { storeToRefs } from "pinia";
-import { client } from "@/client";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { invoke, until } from "@vueuse/core";
 import Chart from "chart.js/auto";
 import { Loader } from "@googlemaps/js-api-loader";
-import { terminales_map } from "@/client";
+import { terminales_map, client } from "@/client";
 
 const { getindicador } = useIndicadorStore();
 const { m_indicador_change } = storeToRefs(useIndicadorStore());
 
 const loading = ref(true);
+
+const showDashboard = computed(() => {
+  if (client === "voy") return true;
+  else return false;
+});
 
 invoke(async () => {
   //Espera ejecución hasta que exista algun dato
@@ -183,10 +180,16 @@ invoke(async () => {
   width: 100%;
   max-width: 600px;
 }
+
+.my-card-double {
+  width: 100%;
+  max-width: 1230px;
+}
+
 .map {
   margin: 0;
   padding: 0;
-  height: 300px;
+  height: 350px;
   max-width: 600px;
 }
 .map :deep(.custom-map-control-button) {
@@ -203,5 +206,21 @@ invoke(async () => {
 }
 .map :deep(.custom-map-control-button:hover) {
   color: rgb(17, 17, 17);
+}
+
+.iframe-container {
+  width: 100%;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 85vh;
+  border: 0;
+}
+
+@media (max-width: 700px) {
+  .iframe-container iframe {
+    height: 110vh;
+  }
 }
 </style>

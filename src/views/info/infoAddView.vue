@@ -9,17 +9,9 @@
           <q-select
             v-model="tipo"
             label="TIPO INFORME"
-            :options="[
-              'ESTADO GENERAL',
-              'HOJA DE VIDA',
-              'REVISION DOCUMENTAL',
-              'INSPECCION TECNICA',
-              'TIEMPO DE RESPUESTA',
-            ]"
+            :options="['ESTADO GENERAL', 'HOJA DE VIDA', 'REVISION DOCUMENTAL', 'INSPECCION TECNICA', 'TIEMPO DE RESPUESTA']"
             dense
-            :rules="[
-              (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-            ]"
+            :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
             :readonly="submited"
           >
             <template v-slot:before>
@@ -31,10 +23,7 @@
             mask="##/##/####"
             label="FECHA CREACION"
             fill-mask
-            :rules="[
-              (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-              (val) => fecha_creacion_timestamp || 'Fecha invalida.',
-            ]"
+            :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.', (val) => fecha_creacion_timestamp || 'Fecha invalida.']"
             dense
             input-class="text-uppercase"
             :readonly="submited"
@@ -44,11 +33,7 @@
             </template>
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                   <q-date v-model="fecha_creacion" mask="DD/MM/YYYY">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat />
@@ -61,24 +46,9 @@
           <q-select
             v-model="mes"
             label="MES INFORME"
-            :options="[
-              'ENERO',
-              'FEBRERO',
-              'MARZO',
-              'ABRIL',
-              'MAYO',
-              'JUNIO',
-              'JULIO',
-              'AGOSTO',
-              'SEPTIEMBRE',
-              'OCTUBRE',
-              'NOVIEMBRE',
-              'DICIEMBRE',
-            ]"
+            :options="['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']"
             dense
-            :rules="[
-              (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-            ]"
+            :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
             :readonly="submited"
           >
             <template v-slot:before>
@@ -88,11 +58,9 @@
           <q-select
             v-model="ano"
             label="AÑO INFORME"
-            :options="['2023', '2024', '2025']"
+            :options="['2025', '2026']"
             dense
-            :rules="[
-              (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-            ]"
+            :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
             :readonly="submited"
           >
             <template v-slot:before>
@@ -113,12 +81,7 @@
           </q-file>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn
-            label="Agregar"
-            type="submit"
-            color="primary"
-            :loading="submited"
-          />
+          <q-btn label="Agregar" type="submit" color="primary" :loading="submited" />
         </q-card-actions>
       </q-form>
     </q-card>
@@ -177,10 +140,7 @@ const onSubmit = async () => {
   };
   add(payload);
   const storage = getStorage();
-  await uploadBytes(
-    reff(storage, `informes/${uuid}.${file.value.name.split(".").pop()}`),
-    file.value
-  );
+  await uploadBytes(reff(storage, `informes/${uuid}.${file.value.name.split(".").pop()}`), file.value);
   notify({
     color: "green-6",
     textColor: "white",
@@ -193,7 +153,7 @@ const onSubmit = async () => {
       router.push({
         name: "info_list",
       }),
-    2500
+    2500,
   );
 };
 const onRejected = () => {

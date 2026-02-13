@@ -4,17 +4,7 @@ import { unidad_negocio_arr, client } from "@/client";
 import { ref } from "vue";
 import { db, functions } from "@/firebase";
 import { httpsCallable } from "firebase/functions";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  writeBatch,
-  serverTimestamp,
-  getDocsFromCache,
-  orderBy,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, writeBatch, serverTimestamp, getDocsFromCache, orderBy, limit } from "firebase/firestore";
 export const useMcorrStore = defineStore("mcorrStore", () => {
   const m_mant_corr_change = ref(0);
   let unsubscribe = () => {};
@@ -40,10 +30,7 @@ export const useMcorrStore = defineStore("mcorrStore", () => {
     m_mant_corr_change.value++;
   };
   const getall = async () => {
-    const q = query(
-      collection(db, "mantenimiento_correctivo"),
-      where("ot_apertura_timestamp", ">=", date.getTime() / 1000)
-    );
+    const q = query(collection(db, "mantenimiento_correctivo"), where("ot_apertura_timestamp", ">=", date.getTime() / 1000));
     const docsRef = await getDocsFromCache(q);
     const docs = [];
     for (const doc of docsRef.docs) {
@@ -66,12 +53,22 @@ export const useMcorrStore = defineStore("mcorrStore", () => {
       return [];
     }
   };
-  const bind = () => {
+  const emptycache = async () => {
+    const q = query(collection(db, "mantenimiento_correctivo"), limit(1));
+    const snap = await getDocsFromCache(q);
+    return snap.empty;
+  };
+
+  const bind = async () => {
+    //Si no hay nada en cache reiniciamos fecha
+    const empty = await emptycache();
+    if (empty) timestamp.value = date;
+    
     const q = query(
       collection(db, "mantenimiento_correctivo"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -79,8 +76,7 @@ export const useMcorrStore = defineStore("mcorrStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_mant_corr_change.value++;
@@ -88,8 +84,8 @@ export const useMcorrStore = defineStore("mcorrStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();

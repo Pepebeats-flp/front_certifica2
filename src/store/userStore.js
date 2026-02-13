@@ -52,12 +52,7 @@ export const useUserStore = defineStore("userStore", () => {
         user
           .getIdTokenResult()
           .then((tokenResult) => {
-            if (
-              !tokenResult.claims.allow_access &&
-              !tokenResult.claims[client] &&
-              !tokenResult.claims.dtpm
-            )
-              clearuser();
+            if (!tokenResult.claims.allow_access && !tokenResult.claims[client] && !tokenResult.claims.dtpm) clearuser();
           })
           .catch(() => {});
       } else clearuser();

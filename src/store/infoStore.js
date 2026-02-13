@@ -3,18 +3,7 @@ import { useStorage } from "@vueuse/core";
 import { unidad_negocio_arr } from "@/client";
 import { ref } from "vue";
 import { db } from "@/firebase";
-import {
-  doc,
-  setDoc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-  updateDoc,
-  serverTimestamp,
-  getDocsFromCache,
-  orderBy,
-} from "firebase/firestore";
+import { doc, setDoc, collection, query, where, onSnapshot, updateDoc, serverTimestamp, getDocsFromCache, orderBy, limit } from "firebase/firestore";
 export const useInfoStore = defineStore("infoStore", () => {
   const m_informes_change = ref(0);
   let unsubscribe = () => {};
@@ -40,11 +29,7 @@ export const useInfoStore = defineStore("infoStore", () => {
     const docsRef = await getDocsFromCache(q);
     for (const doc of docsRef.docs) {
       const data = doc.data();
-      if (
-        !last ||
-        last.fecha_creacion_timestamp < data.fecha_creacion_timestamp
-      )
-        last = data;
+      if (!last || last.fecha_creacion_timestamp < data.fecha_creacion_timestamp) last = data;
     }
     return last;
   };
@@ -58,12 +43,22 @@ export const useInfoStore = defineStore("infoStore", () => {
     updateDoc(doc(db, "informes", payload.uuid), payload);
     m_informes_change.value++;
   };
-  const bind = () => {
+  const emptycache = async () => {
+    const q = query(collection(db, "informes"), limit(1));
+    const snap = await getDocsFromCache(q);
+    return snap.empty;
+  };
+  const bind = async () => {
+    //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
+    //Pero la fecha queda guardada.. al refrescar no quedan datos
+    const empty = await emptycache();
+    if (empty) timestamp.value = date;
+
     const q = query(
       collection(db, "informes"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -71,8 +66,7 @@ export const useInfoStore = defineStore("infoStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_informes_change.value++;
@@ -80,8 +74,8 @@ export const useInfoStore = defineStore("infoStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();

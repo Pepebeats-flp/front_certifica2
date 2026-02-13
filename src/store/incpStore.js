@@ -5,14 +5,7 @@ import { ref } from "vue";
 import { db, functions } from "@/firebase";
 import { httpsCallable } from "firebase/functions";
 
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getDocsFromCache,
-  orderBy,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot, getDocsFromCache, orderBy, limit } from "firebase/firestore";
 export const useIncpStore = defineStore("incpstore", () => {
   const m_incumple_change = ref(0);
   let unsubscribe = () => {};
@@ -45,12 +38,23 @@ export const useIncpStore = defineStore("incpstore", () => {
       return [];
     }
   };
-  const bind = () => {
+  const emptycache = async () => {
+    const q = query(collection(db, "incumple"), limit(1));
+    const snap = await getDocsFromCache(q);
+    return snap.empty;
+  };
+
+  const bind = async () => {
+    //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
+    //Pero la fecha queda guardada.. al refrescar no quedan datos
+    const empty = await emptycache();
+    if (empty) timestamp.value = date;
+
     const q = query(
       collection(db, "incumple"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -58,8 +62,7 @@ export const useIncpStore = defineStore("incpstore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_incumple_change.value++;
@@ -67,8 +70,8 @@ export const useIncpStore = defineStore("incpstore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();

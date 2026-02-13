@@ -4,15 +4,7 @@ import { unidad_negocio_arr, client } from "@/client";
 import { ref } from "vue";
 import { db, functions } from "@/firebase";
 import { httpsCallable } from "firebase/functions";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getDocsFromCache,
-  orderBy,
-  limit,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot, getDocsFromCache, orderBy, limit } from "firebase/firestore";
 export const useEstadogpStore = defineStore("estadogpStore", () => {
   const m_change = ref(0);
   let unsubscribe = () => {};
@@ -22,11 +14,7 @@ export const useEstadogpStore = defineStore("estadogpStore", () => {
 
   //Solo programaciones en proceso
   const getall = async () => {
-    const q = query(
-      collection(db, "estado_general_prog"),
-      where("estado", "==", 0),
-      where("fecha_inicio_timestamp", ">=", date.getTime() / 1000)
-    );
+    const q = query(collection(db, "estado_general_prog"), where("estado", "==", 0), where("fecha_inicio_timestamp", ">=", date.getTime() / 1000));
     const docsRef = await getDocsFromCache(q);
     const docs = [];
     for (const doc of docsRef.docs) {
@@ -38,11 +26,7 @@ export const useEstadogpStore = defineStore("estadogpStore", () => {
   };
   //Solo programaciones en proceso
   const getppu = async (placa_patente) => {
-    const q = query(
-      collection(db, "estado_general_prog"),
-      where("estado", "==", 0),
-      where("placa_patente", "==", placa_patente)
-    );
+    const q = query(collection(db, "estado_general_prog"), where("estado", "==", 0), where("placa_patente", "==", placa_patente));
     const docsRef = await getDocsFromCache(q);
     if (docsRef.empty) return null;
     else return docsRef.docs[0].data();
@@ -75,7 +59,7 @@ export const useEstadogpStore = defineStore("estadogpStore", () => {
       collection(db, "estado_general_prog"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -83,8 +67,7 @@ export const useEstadogpStore = defineStore("estadogpStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_change.value++;
@@ -92,8 +75,8 @@ export const useEstadogpStore = defineStore("estadogpStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();

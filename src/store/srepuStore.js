@@ -17,6 +17,7 @@ import {
   orderBy,
   setDoc,
   updateDoc,
+  limit,
 } from "firebase/firestore";
 export const useSrepuStore = defineStore("srepuStore", () => {
   const m_solicitud_repuesto_change = ref(0);
@@ -56,10 +57,7 @@ export const useSrepuStore = defineStore("srepuStore", () => {
     return true;
   };
   const getall = async () => {
-    const q = query(
-      collection(db, "solicitud_repuesto"),
-      where("oc_solicitud_timestamp", ">=", date.getTime() / 1000)
-    );
+    const q = query(collection(db, "solicitud_repuesto"), where("oc_solicitud_timestamp", ">=", date.getTime() / 1000));
     const docsRef = await getDocsFromCache(q);
     const docs = [];
     for (const doc of docsRef.docs) {
@@ -82,7 +80,17 @@ export const useSrepuStore = defineStore("srepuStore", () => {
       return [];
     }
   };
-  const bind = () => {
+  const emptycache = async () => {
+    const q = query(collection(db, "solicitud_repuesto"), limit(1));
+    const snap = await getDocsFromCache(q);
+    return snap.empty;
+  };
+
+  const bind = async () => {
+    //Si no hay nada en cache reiniciamos fecha
+    const empty = await emptycache();
+    if (empty) timestamp.value = date;
+
     const { carro } = useUserStore();
     let q = "";
     if (carro)
@@ -91,14 +99,14 @@ export const useSrepuStore = defineStore("srepuStore", () => {
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("dominio", "==", "0"), //Carroceria
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     else
       q = query(
         collection(db, "solicitud_repuesto"),
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
 
     unsubscribe = onSnapshot(
@@ -107,8 +115,7 @@ export const useSrepuStore = defineStore("srepuStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_solicitud_repuesto_change.value++;
@@ -116,8 +123,8 @@ export const useSrepuStore = defineStore("srepuStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();

@@ -17,6 +17,7 @@ import {
   orderBy,
   setDoc,
   updateDoc,
+  limit,
 } from "firebase/firestore";
 export const useSdiagStore = defineStore("sdiagStore", () => {
   const m_solicitud_diagnostico_change = ref(0);
@@ -56,10 +57,7 @@ export const useSdiagStore = defineStore("sdiagStore", () => {
     return true;
   };
   const getall = async () => {
-    const q = query(
-      collection(db, "solicitud_diagnostico"),
-      where("ot_solicitud_timestamp", ">=", date.getTime() / 1000)
-    );
+    const q = query(collection(db, "solicitud_diagnostico"), where("ot_solicitud_timestamp", ">=", date.getTime() / 1000));
     const docsRef = await getDocsFromCache(q);
     const docs = [];
     for (const doc of docsRef.docs) {
@@ -82,7 +80,17 @@ export const useSdiagStore = defineStore("sdiagStore", () => {
       return [];
     }
   };
-  const bind = () => {
+  const emptycache = async () => {
+    const q = query(collection(db, "solicitud_diagnostico"), limit(1));
+    const snap = await getDocsFromCache(q);
+    return snap.empty;
+  };
+
+  const bind = async () => {
+    //Si no hay nada en cache reiniciamos fecha
+    const empty = await emptycache();
+    if (empty) timestamp.value = date;
+
     const { carro } = useUserStore();
     let q = "";
     if (carro)
@@ -91,14 +99,14 @@ export const useSdiagStore = defineStore("sdiagStore", () => {
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("dominio", "==", "0"), //Carroceria
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     else
       q = query(
         collection(db, "solicitud_diagnostico"),
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     unsubscribe = onSnapshot(
       q,
@@ -106,8 +114,7 @@ export const useSdiagStore = defineStore("sdiagStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_solicitud_diagnostico_change.value++;
@@ -115,8 +122,8 @@ export const useSdiagStore = defineStore("sdiagStore", () => {
       (error) => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
-        timestamp.value = date;
-      }
+        //timestamp.value = date;
+      },
     );
   };
   const unbind = () => unsubscribe();
