@@ -60,10 +60,11 @@ export const useMcorrStore = defineStore("mcorrStore", () => {
   };
 
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     //Si no hay nada en cache reiniciamos fecha
     const empty = await emptycache();
     if (empty) timestamp.value = date;
-    
+
     const q = query(
       collection(db, "mantenimiento_correctivo"),
       where("unidad_negocio", "in", unidad_negocio_arr),

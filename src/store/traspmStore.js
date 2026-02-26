@@ -68,6 +68,7 @@ export const useTraspmStore = defineStore("traspmStore", () => {
     reg_change.value++;
   };
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     const { dtpm } = useUserStore();
     //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
     //Pero la fecha queda guardada.. al refrescar no quedan datos
@@ -81,14 +82,14 @@ export const useTraspmStore = defineStore("traspmStore", () => {
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("estado", "in", [1, 2, 3]),
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     else
       q = query(
         collection(db, "traspaso_mayor"),
         where("unidad_negocio", "in", unidad_negocio_arr),
         where("timestamp", ">", timestamp.value),
-        orderBy("timestamp")
+        orderBy("timestamp"),
       );
     unsubscribe = onSnapshot(
       q,
@@ -96,8 +97,7 @@ export const useTraspmStore = defineStore("traspmStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
           if (route.params.uuid === data.uuid) regd_change.value++;
         });
         timestamp.value = curr_timestamp;
@@ -107,7 +107,7 @@ export const useTraspmStore = defineStore("traspmStore", () => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
         //timestamp.value = date;
-      }
+      },
     );
   };
   const unbind = () => unsubscribe();

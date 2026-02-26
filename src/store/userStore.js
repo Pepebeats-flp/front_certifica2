@@ -17,7 +17,7 @@ export const useUserStore = defineStore("userStore", () => {
   const sdiag = useStorage("sdiag", false);
   const carro = useStorage("carro", false);
 
-  let unsubscribe = null;
+  let unsubscribe = () => {};
   const router = useRouter();
 
   const setuser = (payload) => {
@@ -47,6 +47,7 @@ export const useUserStore = defineStore("userStore", () => {
     setTimeout(() => router.push({ name: "login" }), 4000);
   };
   const binduser = () => {
+    unsubscribe(); //Limpia subscripciones previas
     unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         user

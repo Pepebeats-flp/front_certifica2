@@ -14,13 +14,7 @@ export default defineConfig({
     quasar(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: [
-        "icons/favicon.ico",
-        "icons/apple-touch-icon.png",
-        "images/*.webp",
-        "images/avatar.png",
-        "images/google_logo.svg",
-      ],
+      includeAssets: ["icons/favicon.ico", "icons/apple-touch-icon.png", "images/*.webp", "images/avatar.png", "images/google_logo.svg"],
       manifest: {
         name: "Conecta Certifica",
         short_name: "Conecta Certifica",
@@ -54,6 +48,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,woff,woff2}"],
+        navigateFallbackDenylist: [
+          // Exclude routes starting with /api/
+          /^\/api\//,
+        ],
       },
     }),
   ],
@@ -63,8 +61,6 @@ export default defineConfig({
     },
   },
   define: {
-    __APP_VERSION__: JSON.stringify(
-      new Date().toLocaleDateString("en-GB").replaceAll("/", "")
-    ),
+    __APP_VERSION__: JSON.stringify(new Date().toLocaleDateString("en-GB").replaceAll("/", "")),
   },
 });

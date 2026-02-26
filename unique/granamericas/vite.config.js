@@ -48,6 +48,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,woff,woff2}"],
+        navigateFallbackDenylist: [
+          // Exclude routes starting with /api/
+          /^\/api\//,
+        ],
       },
     }),
   ],

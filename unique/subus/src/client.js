@@ -73,6 +73,7 @@ const inspeccion_pautas = [
 const meses_estado_general = 3;
 const meses_inspeccion_tecnica = 6;
 const dashboard_link = "https://app.powerbi.com/home";
+const hdasboard_link = "";
 const revdoc_map = new Map([
   [true, "CUMPLE"],
   [false, "NO CUMPLE"],
@@ -90,6 +91,7 @@ export {
   meses_estado_general,
   meses_inspeccion_tecnica,
   dashboard_link,
+  hdasboard_link,
   unidad_map,
   terminales_map,
   revdoc_map,

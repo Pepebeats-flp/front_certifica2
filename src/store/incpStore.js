@@ -45,6 +45,7 @@ export const useIncpStore = defineStore("incpstore", () => {
   };
 
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
     //Pero la fecha queda guardada.. al refrescar no quedan datos
     const empty = await emptycache();

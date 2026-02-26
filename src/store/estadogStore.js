@@ -106,6 +106,7 @@ export const useEstadogStore = defineStore("estadogStore", () => {
     m_estado_general_change.value++;
   };
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     const { dtpm } = useUserStore();
     //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
     //Pero la fecha queda guardada.. al refrescar no quedan datos
@@ -148,6 +149,7 @@ export const useEstadogStore = defineStore("estadogStore", () => {
     );
   };
   const bind_p = () => {
+    unsubscribe_p(); //Limpia subscripciones previas
     const q = query(collection(db, "estado_general_p"), where("unidad_negocio", "==", unidad_negocio));
     unsubscribe_p = onSnapshot(q, () => m_estado_generalp_change.value++);
   };

@@ -23,6 +23,7 @@ const inspeccion_pautas = ["ZK6128", "S"];
 const meses_estado_general = 3;
 const meses_inspeccion_tecnica = 6;
 const dashboard_link = "https://app.powerbi.com/home";
+const hdasboard_link = "https://lookerstudio.google.com/embed/reporting/9f83d30b-6200-40b4-bf3e-76cb68066111/page/p_l1vaxcuu0d";
 const revdoc_map = new Map([
   [true, "APROBADO"],
   [false, "NO APROBADO"],
@@ -40,6 +41,7 @@ export {
   meses_estado_general,
   meses_inspeccion_tecnica,
   dashboard_link,
+  hdasboard_link,
   unidad_map,
   terminales_map,
   revdoc_map,

@@ -18,6 +18,7 @@ const inspeccion_pautas = ["MP4-160", "MP1-200", "I-175", "R-20", "CORRECTIVO"];
 const meses_estado_general = 3;
 const meses_inspeccion_tecnica = 6;
 const dashboard_link = "https://app.powerbi.com/home";
+const hdasboard_link = "https://lookerstudio.google.com/embed/reporting/1dc67d51-26bd-4aa4-ab9f-39bcdf6d36c9/page/ELsoF";
 const revdoc_map = new Map([
   [true, "CUMPLE"],
   [false, "NO CUMPLE"],
@@ -39,6 +40,7 @@ export {
   meses_estado_general,
   meses_inspeccion_tecnica,
   dashboard_link,
+  hdasboard_link,
   unidad_map,
   terminales_map,
   revdoc_map,

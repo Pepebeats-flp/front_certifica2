@@ -76,6 +76,7 @@ export const useRevtecStore = defineStore("revtecStore", () => {
   };
 
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     //Si no hay nada en cache reiniciamos fecha
     const empty = await emptycache();
     if (empty) timestamp.value = date;

@@ -16,9 +16,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icons/favicon.ico", "icons/apple-touch-icon.png", "images/*.webp", "images/avatar.png", "images/google_logo.svg"],
       manifest: {
-        name: "Voy Certifica",
-        short_name: "Voy Certifica",
-        description: "Voy Certifica",
+        name: "GranAmericas Certifica",
+        short_name: "GranAmericas Certifica",
+        description: "GranAmericas Certifica",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [

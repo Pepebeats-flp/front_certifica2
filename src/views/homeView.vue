@@ -5,10 +5,11 @@
         <q-card-section>
           <div class="text-h6">Dashboard Cumplimiento</div>
 
-          <div class="iframe-container">
+          <div class="iframe-container" :class="`iframe-${client}`">
             <iframe
-              src="https://lookerstudio.google.com/embed/reporting/9f83d30b-6200-40b4-bf3e-76cb68066111/page/p_l1vaxcuu0d"
+              :src="hdasboard_link"
               frameborder="0"
+              style="border: 0"
               allowfullscreen
               sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
             ></iframe>
@@ -60,7 +61,7 @@ import { ref, computed } from "vue";
 import { invoke, until } from "@vueuse/core";
 import Chart from "chart.js/auto";
 import { Loader } from "@googlemaps/js-api-loader";
-import { terminales_map, client } from "@/client";
+import { terminales_map, client, hdasboard_link } from "@/client";
 
 const { getindicador } = useIndicadorStore();
 const { m_indicador_change } = storeToRefs(useIndicadorStore());
@@ -68,7 +69,7 @@ const { m_indicador_change } = storeToRefs(useIndicadorStore());
 const loading = ref(true);
 
 const showDashboard = computed(() => {
-  if (client === "voy") return true;
+  if (["voy", "redbus"].includes(client)) return true;
   else return false;
 });
 
@@ -212,15 +213,24 @@ invoke(async () => {
   width: 100%;
 }
 
-.iframe-container iframe {
+.iframe-voy iframe {
   width: 100%;
   height: 85vh;
   border: 0;
 }
 
+.iframe-redbus iframe {
+  width: 100%;
+  height: 95vh;
+  border: 0;
+}
+
 @media (max-width: 700px) {
-  .iframe-container iframe {
+  .iframe-voy iframe {
     height: 110vh;
+  }
+  .iframe-redbus iframe {
+    height: 175vh;
   }
 }
 </style>

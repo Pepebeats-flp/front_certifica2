@@ -4,15 +4,7 @@ import { unidad_negocio_arr, client } from "@/client";
 import { ref } from "vue";
 import { db, functions } from "@/firebase";
 import { httpsCallable } from "firebase/functions";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getDocsFromCache,
-  orderBy,
-  limit,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot, getDocsFromCache, orderBy, limit } from "firebase/firestore";
 export const useInspecpStore = defineStore("inspecpStore", () => {
   const m_change = ref(0);
   let unsubscribe = () => {};
@@ -25,7 +17,7 @@ export const useInspecpStore = defineStore("inspecpStore", () => {
     const q = query(
       collection(db, "inspeccion_tecnica_prog"),
       where("estado", "==", 0),
-      where("fecha_inicio_timestamp", ">=", date.getTime() / 1000)
+      where("fecha_inicio_timestamp", ">=", date.getTime() / 1000),
     );
     const docsRef = await getDocsFromCache(q);
     const docs = [];
@@ -38,11 +30,7 @@ export const useInspecpStore = defineStore("inspecpStore", () => {
   };
   //Solo programaciones en proceso
   const getppu = async (placa_patente) => {
-    const q = query(
-      collection(db, "inspeccion_tecnica_prog"),
-      where("estado", "==", 0),
-      where("placa_patente", "==", placa_patente)
-    );
+    const q = query(collection(db, "inspeccion_tecnica_prog"), where("estado", "==", 0), where("placa_patente", "==", placa_patente));
     const docsRef = await getDocsFromCache(q);
     if (docsRef.empty) return null;
     else return docsRef.docs[0].data();
@@ -67,6 +55,7 @@ export const useInspecpStore = defineStore("inspecpStore", () => {
     return snap.empty;
   };
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     //Si no hay nada en cache reiniciamos fecha. Pasa que no se tiene acceso a persistencia, queda en memoria
     //Pero la fecha queda guardada.. al refrescar no quedan datos
     const empty = await emptycache();
@@ -76,7 +65,7 @@ export const useInspecpStore = defineStore("inspecpStore", () => {
       collection(db, "inspeccion_tecnica_prog"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -84,8 +73,7 @@ export const useInspecpStore = defineStore("inspecpStore", () => {
         let curr_timestamp = timestamp.value;
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          if (data.timestamp && data.timestamp.toDate() > curr_timestamp)
-            curr_timestamp = data.timestamp.toDate();
+          if (data.timestamp && data.timestamp.toDate() > curr_timestamp) curr_timestamp = data.timestamp.toDate();
         });
         timestamp.value = curr_timestamp;
         m_change.value++;
@@ -94,7 +82,7 @@ export const useInspecpStore = defineStore("inspecpStore", () => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
         //timestamp.value = date;
-      }
+      },
     );
   };
   const unbind = () => unsubscribe();

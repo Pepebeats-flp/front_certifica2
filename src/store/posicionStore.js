@@ -2,13 +2,7 @@ import { defineStore } from "pinia";
 import { unidad_negocio_arr } from "@/client";
 import { ref } from "vue";
 import { db } from "@/firebase";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getDocsFromCache,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot, getDocsFromCache } from "firebase/firestore";
 export const usePosicionStore = defineStore("posicionStore", () => {
   const m_posicion_change = ref(0);
   let unsubscribe = () => {};
@@ -24,10 +18,8 @@ export const usePosicionStore = defineStore("posicionStore", () => {
     return docs;
   };
   const bind = () => {
-    const q = query(
-      collection(db, "posicion"),
-      where("unidad_negocio", "in", unidad_negocio_arr)
-    );
+    unsubscribe(); //Limpia subscripciones previas
+    const q = query(collection(db, "posicion"), where("unidad_negocio", "in", unidad_negocio_arr));
     unsubscribe = onSnapshot(q, () => {
       m_posicion_change.value++;
     });

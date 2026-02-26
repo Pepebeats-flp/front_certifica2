@@ -85,6 +85,7 @@ export const useInspecStore = defineStore("inspecStore", () => {
     m_inspeccion_tecnica_change.value++;
   };
   const bind = async () => {
+    unsubscribe(); //Limpia subscripciones previas
     //Si no hay nada en cache reiniciamos fecha
     const empty = await emptycache();
     if (empty) timestamp.value = date;
@@ -93,7 +94,7 @@ export const useInspecStore = defineStore("inspecStore", () => {
       collection(db, "inspeccion_tecnica"),
       where("unidad_negocio", "in", unidad_negocio_arr),
       where("timestamp", ">", timestamp.value),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     unsubscribe = onSnapshot(
       q,
@@ -111,7 +112,7 @@ export const useInspecStore = defineStore("inspecStore", () => {
         //Permision denied (En algunos casos se elimnan los registros en cache de forma automatica)
         console.log(error);
         //timestamp.value = date;
-      }
+      },
     );
   };
   const unbind = () => unsubscribe();

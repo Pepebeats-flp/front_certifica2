@@ -2,14 +2,7 @@ import { defineStore } from "pinia";
 import { unidad_negocio_arr } from "@/client";
 import { ref } from "vue";
 import { db } from "@/firebase";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getDocFromCache,
-} from "firebase/firestore";
+import { doc, collection, query, where, onSnapshot, getDocFromCache } from "firebase/firestore";
 export const useIndicadorStore = defineStore("indicadorStore", () => {
   const m_indicador_change = ref(0);
   let unsubscribe = () => {};
@@ -19,10 +12,8 @@ export const useIndicadorStore = defineStore("indicadorStore", () => {
     return docRef.data();
   };
   const bind = () => {
-    const q = query(
-      collection(db, "indicador"),
-      where("unidad_negocio", "in", unidad_negocio_arr)
-    );
+    unsubscribe(); //Limpia subscripciones previas
+    const q = query(collection(db, "indicador"), where("unidad_negocio", "in", unidad_negocio_arr));
     unsubscribe = onSnapshot(q, () => {
       m_indicador_change.value++;
     });
