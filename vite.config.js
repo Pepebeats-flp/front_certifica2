@@ -16,9 +16,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icons/favicon.ico", "icons/apple-touch-icon.png", "images/*.webp", "images/avatar.png", "images/google_logo.svg"],
       manifest: {
-        name: "GranAmericas Certifica",
-        short_name: "GranAmericas Certifica",
-        description: "GranAmericas Certifica",
+        name: "Redbus Certifica",
+        short_name: "Redbus Certifica",
+        description: "Redbus Certifica",
         theme_color: "#000000",
         background_color: "#000000",
         icons: [

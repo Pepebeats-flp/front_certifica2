@@ -172,6 +172,12 @@
               </q-item-section>
               <q-item-section>Estado Certificación</q-item-section>
             </q-item>
+            <q-item v-if="!dtpm" clickable v-ripple active-class="tab-active" to="/indI">
+              <q-item-section avatar>
+                <q-icon name="chevron_right"></q-icon>
+              </q-item-section>
+              <q-item-section> Incumplimiento</q-item-section>
+            </q-item>
           </q-expansion-item>
           <q-expansion-item v-if="showMenu()" expand-separator icon="place" label="Seguimiento">
             <q-item clickable v-ripple active-class="tab-active" to="/sinop">

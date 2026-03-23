@@ -16,23 +16,9 @@
       loading-label="Cargando.."
     >
       <template v-slot:top>
-        <q-btn
-          color="dark"
-          label="Histórico"
-          class="q-mr-sm"
-          @click="exportTable"
-          :loading="loading_his"
-        />
+        <q-btn color="dark" label="Histórico" class="q-mr-sm" @click="exportTable" :loading="loading_his" />
         <q-space />
-        <q-input
-          debounce="500"
-          dense
-          v-model="filter"
-          label="Filtrar"
-          type="search"
-          style="max-width: 50%"
-          input-class="text-uppercase"
-        >
+        <q-input debounce="500" dense v-model="filter" label="Filtrar" type="search" style="max-width: 50%" input-class="text-uppercase">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -90,14 +76,7 @@ const columns = [
   {
     name: "estado",
     label: "Estado",
-    field: (row) =>
-      row.estado === 0
-        ? "En Proceso"
-        : row.estado === 1
-        ? "Finalizado"
-        : row.estado === 3
-        ? "Eliminado"
-        : "",
+    field: (row) => (row.estado === 0 ? "En Proceso" : row.estado === 1 ? "Finalizado" : row.estado === 3 ? "Eliminado" : ""),
     align: "center",
   },
   {
@@ -110,20 +89,13 @@ const columns = [
     name: "actividad",
     label: "Actividad",
     field: (row) =>
-      row.actividad === 0
-        ? "ESTADO GENERAL"
-        : row.actividad === 1
-        ? "INSPECCION TECNICA"
-        : row.actividad === 2
-        ? "MANTENIMIENTO PREVENTIVO"
-        : "",
+      row.actividad === 0 ? "ESTADO GENERAL" : row.actividad === 1 ? "INSPECCION TECNICA" : row.actividad === 2 ? "MANTENIMIENTO PREVENTIVO" : "",
     align: "center",
   },
   {
     name: "causa",
     label: "Causa",
-    field: (row) =>
-      row.causa === 0 ? "CADUCADO" : row.causa === 1 ? "NO APROBADO" : "",
+    field: (row) => (row.causa === 0 ? "NO PRESENTADO" : row.causa === 1 ? "NO APROBADO" : ""),
     align: "center",
   },
   {
@@ -202,26 +174,16 @@ const exportTable = async () => {
       revision.unidad_negocio,
       revision.unidad_servicio,
       revision.uuid,
-      revision.estado === 0
-        ? "EN PROCESO"
-        : revision.estado === 1
-        ? "FINALIZADO"
-        : revision.estado === 3
-        ? "ELIMINADO"
-        : "",
+      revision.estado === 0 ? "EN PROCESO" : revision.estado === 1 ? "FINALIZADO" : revision.estado === 3 ? "ELIMINADO" : "",
       revision.placa_patente,
       revision.actividad === 0
         ? "ESTADO GENERAL"
         : revision.actividad === 1
-        ? "INSPECCION TECNICA"
-        : revision.actividad === 2
-        ? "MANTENIMIENTO PREVENTIVO"
-        : "",
-      revision.causa === 0
-        ? "CADUCADO"
-        : revision.causa === 1
-        ? "NO APROBADO"
-        : "",
+          ? "INSPECCION TECNICA"
+          : revision.actividad === 2
+            ? "MANTENIMIENTO PREVENTIVO"
+            : "",
+      revision.causa === 0 ? "NO PRESENTADO" : revision.causa === 1 ? "NO APROBADO" : "",
       revision.fecha_inicio,
       revision.hora_inicio,
       revision.fecha_termino,
@@ -242,6 +204,6 @@ watch(
     incumple_arr.value = await getall();
     if (m_incumple_change.value > 0) loading.value = false;
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

@@ -130,8 +130,8 @@ const visible_cols = [
   "sistema_componente",
   "co_numero",
   "oc_numero",
-  "oc_solicitud_fecha",
-  "oc_solicitud_hora",
+  //"oc_solicitud_fecha",
+  //"oc_solicitud_hora",
   "oc_solicitud_name",
   "oc_entrega_solicitada_fecha",
   "oc_entrega_solicitada_hora",
@@ -237,13 +237,13 @@ const columns = [
   },
   {
     name: "oc_entrega_solicitada_fecha",
-    label: "Fecha Entrega Solicitada",
+    label: "Fecha Solicitud",
     field: "oc_entrega_solicitada_fecha",
     align: "center",
   },
   {
     name: "oc_entrega_solicitada_hora",
-    label: "Hora Entrega Solicitada",
+    label: "Hora Solicitud",
     field: "oc_entrega_solicitada_hora",
     align: "center",
   },
@@ -530,11 +530,11 @@ const exportTable = async () => {
     "SISTEMA / COMPONENTE",
     "NUMERO CO",
     "NUMERO OC",
+    //"FECHA SOLICITUD",
+    //"HORA SOLICITUD",
+    "SOLICITANTE",
     "FECHA SOLICITUD",
     "HORA SOLICITUD",
-    "SOLICITANTE",
-    "FECHA ENTREGA SOLICITADA",
-    "HORA ENTREGA SOLICITADA",
     "TALLER / PLANTA",
     "DOMINIO",
     "TIPO REPUESTO",
@@ -564,6 +564,7 @@ const exportTable = async () => {
     });
   }
   for (const solicitud_repuesto of registros) {
+    if (solicitud_repuesto.motivo_solicitud === 0) continue; //No consideramos solicitudes por motivo Stock
     content.push([
       solicitud_repuesto.unidad_negocio,
       solicitud_repuesto.unidad_servicio,
@@ -572,17 +573,17 @@ const exportTable = async () => {
       solicitud_repuesto.estado === 0
         ? "En Proceso"
         : solicitud_repuesto.estado === 1
-        ? "Finalizada"
-        : solicitud_repuesto.estado === 3
-        ? "Eliminada"
-        : "",
+          ? "Finalizada"
+          : solicitud_repuesto.estado === 3
+            ? "Eliminada"
+            : "",
       solicitud_repuesto.tipo_solicitud,
       motivo_map.get(solicitud_repuesto.motivo_solicitud) || "",
       solicitud_repuesto.sistema_componente,
       solicitud_repuesto.co_numero,
       solicitud_repuesto.oc_numero,
-      solicitud_repuesto.oc_solicitud_fecha,
-      solicitud_repuesto.oc_solicitud_hora,
+      //solicitud_repuesto.oc_solicitud_fecha,
+      //solicitud_repuesto.oc_solicitud_hora,
       solicitud_repuesto.oc_solicitud_name,
       solicitud_repuesto.oc_entrega_solicitada_fecha,
       solicitud_repuesto.oc_entrega_solicitada_hora,
@@ -615,9 +616,10 @@ const exportTable = async () => {
 watch(
   () => m_solicitud_repuesto_change.value,
   async () => {
-    solicitud_repuesto_arr.value = await getall();
+    solicitud_repuesto_arr.value = (await getall()).filter((registro) => registro.motivo_solicitud !== 0); //No consideramos solicitudes por motivo Stock
+
     if (m_solicitud_repuesto_change.value > 0) loading.value = false;
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

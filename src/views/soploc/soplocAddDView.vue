@@ -27,9 +27,7 @@
           label="TERMINAL"
           :options="terminales"
           dense
-          :rules="[
-            (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-          ]"
+          :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
           :readonly="submited"
         >
           <template v-slot:before>
@@ -68,11 +66,7 @@
         <q-input
           v-model="placa_patente"
           label="PLACA PATENTE"
-          :rules="[
-            (val) =>
-              (val && validPpu.has(val.toUpperCase())) ||
-              'Por favor, escribe una placa patente válida.',
-          ]"
+          :rules="[(val) => (val && validPpu.has(val.toUpperCase())) || 'Por favor, escribe una placa patente válida.']"
           dense
           mask="XXXXXX"
           debounce="500"
@@ -86,9 +80,7 @@
         <q-input
           v-model="km_ejecucion"
           label="KILOMETRAJE"
-          :rules="[
-            (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-          ]"
+          :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
           dense
           mask="#"
           reverse-fill-mask
@@ -101,18 +93,12 @@
         <q-input
           v-model="fecha_resolucion_solicitada"
           label="FECHA RESOLUCION SOLICITADA"
-          :rules="[
-            (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-          ]"
+          :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
           dense
           readonly
         >
           <q-popup-proxy transition-show="scale" transition-hide="scale">
-            <q-date
-              v-model="fecha_resolucion_solicitada"
-              mask="DD/MM/YYYY"
-              :options="optionsFn"
-            >
+            <q-date v-model="fecha_resolucion_solicitada" mask="DD/MM/YYYY" :options="optionsFn">
               <div class="row items-center justify-end">
                 <q-btn v-close-popup label="Cerrar" color="primary" flat />
               </div>
@@ -126,9 +112,7 @@
           v-model="ot_solicitud_detalle"
           label="DETALLE SOLICITUD"
           dense
-          :rules="[
-            (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-          ]"
+          :rules="[(val) => (val && val.length > 0) || 'Este campo es obligatorio.']"
           input-class="text-uppercase"
           :readonly="submited"
           autogrow
@@ -139,12 +123,7 @@
         </q-input>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn
-          label="Registrar"
-          type="submit"
-          color="primary"
-          :loading="submited"
-        />
+        <q-btn label="Registrar" type="submit" color="primary" :loading="submited" />
       </q-card-actions>
     </q-card>
   </q-form>
@@ -217,9 +196,7 @@ const onSubmit = async () => {
   submited.value = true;
   const nanoid = customAlphabet(alphanumeric, 20);
   const [day, month, year] = fecha_resolucion_solicitada.value.split("/");
-  const fecha_resolucion_solicitada_date = new Date(
-    `${year}-${month}-${day} 00:00:00`
-  );
+  const fecha_resolucion_solicitada_date = new Date(`${year}-${month}-${day} 18:00:00`);
 
   const payload = {
     uuid: nanoid(),
@@ -234,12 +211,8 @@ const onSubmit = async () => {
     ot_solicitud_hora: useDateFormat(new Date(), "HH:mm:ss").value,
     ot_solicitud_timestamp: Date.now() / 1000,
     ot_solicitud_name: name,
-    ot_resolucion_solicitada_fecha: useDateFormat(
-      fecha_resolucion_solicitada_date,
-      "DD/MM/YYYY"
-    ).value,
-    ot_resolucion_solicitada_timestamp:
-      fecha_resolucion_solicitada_date.getTime() / 1000,
+    ot_resolucion_solicitada_fecha: useDateFormat(fecha_resolucion_solicitada_date, "DD/MM/YYYY").value,
+    ot_resolucion_solicitada_timestamp: fecha_resolucion_solicitada_date.getTime() / 1000,
     ot_taller_planta: terminal.value,
     ot_solicitud_detalle: ot_solicitud_detalle.value.toUpperCase(),
     tipo_solicitud: "DIAGNOSTICO",
@@ -267,7 +240,7 @@ const onSubmit = async () => {
       router.push({
         name: "soploc_listd",
       }),
-    2500
+    2500,
   );
 };
 </script>

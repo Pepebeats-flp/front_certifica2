@@ -16,29 +16,10 @@
       loading-label="Cargando.."
     >
       <template v-slot:top>
-        <q-btn
-          color="primary"
-          to="/revdocI/add"
-          label="Agregar"
-          class="q-mr-sm"
-        />
-        <q-btn
-          color="dark"
-          label="Histórico"
-          class="q-mr-sm"
-          @click="exportTable"
-          :loading="loading_his"
-        />
+        <q-btn color="primary" to="/revdocI/add" label="Agregar" class="q-mr-sm" />
+        <q-btn color="dark" label="Histórico" class="q-mr-sm" @click="exportTable" :loading="loading_his" />
         <q-space />
-        <q-input
-          debounce="500"
-          dense
-          v-model="filter"
-          label="Filtrar"
-          type="search"
-          style="max-width: 50%"
-          input-class="text-uppercase"
-        >
+        <q-input debounce="500" dense v-model="filter" label="Filtrar" type="search" style="max-width: 50%" input-class="text-uppercase">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -77,6 +58,17 @@ const visible_cols = [
   "causa_origen",
   "uuid_estado_general",
 ];
+const estado_map = new Map([
+  [0, "En Proceso"],
+  [1, "Finalizada"],
+  [2, ""],
+  [3, "Eliminada"],
+]);
+const tipos_map = new Map([
+  [0, "INCIDENTE"],
+  [1, "SINIESTRO"],
+]);
+
 const columns = [
   {
     name: "unidad_negocio",
@@ -99,7 +91,7 @@ const columns = [
   {
     name: "estado",
     label: "Estado",
-    field: (row) => (row.estado === 0 ? "En Proceso" : "Finalizada"),
+    field: (row) => estado_map.get(row.estado) || "",
     align: "center",
   },
   {
@@ -109,9 +101,9 @@ const columns = [
     align: "center",
   },
   {
-    name: "tipo_servicio",
-    label: "Tipo Servicio",
-    field: "tipo_servicio",
+    name: "tipo",
+    label: "Tipo",
+    field: (row) => tipos_map.get(row.tipo) || "INCIDENTE",
     align: "center",
   },
   {
@@ -219,23 +211,23 @@ const exportTable = async () => {
       timeout: 1000,
     });
   }
-  for (const revision of registros) {
+  for (const registro of registros) {
     content.push([
-      revision.unidad_negocio,
-      revision.unidad_servicio,
-      revision.uuid,
-      revision.estado === 0 ? "EN PROCESO" : "FINALIZADA",
-      revision.placa_patente,
-      revision.tipo_servicio,
-      revision.sistema_componente,
-      revision.causa_origen,
-      revision.inc_apertura_fecha,
-      revision.inc_apertua_hora,
-      revision.inc_cierre_fecha,
-      revision.inc_cierre_hora,
-      revision.uuid_estado_general,
-      revision.inc_taller_planta,
-      revision.km_ejecucion,
+      registro.unidad_negocio,
+      registro.unidad_servicio,
+      registro.uuid,
+      estado_map.get(registro.estado)?.toUpperCase() || "",
+      registro.placa_patente,
+      tipos_map.get(registro.tipo) || "INCIDENTE",
+      registro.sistema_componente,
+      registro.causa_origen,
+      registro.inc_apertura_fecha,
+      registro.inc_apertua_hora,
+      registro.inc_cierre_fecha,
+      registro.inc_cierre_hora,
+      registro.uuid_estado_general,
+      registro.inc_taller_planta,
+      registro.km_ejecucion,
     ]);
   }
   const data = stringify(content, {
@@ -252,6 +244,6 @@ watch(
     incidente_arr.value = await getall();
     if (m_incidente_change.value > 0) loading.value = false;
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
