@@ -16,7 +16,7 @@
     "build:voy": "rm -rf dist_voy && cp -a unique/voy/. . && vite build && mv dist dist_voy",
     "build:conecta": "rm -rf dist_conecta && cp -a unique/conecta/. . && vite build && mv dist dist_conecta",
     "build:granamericas": "rm -rf dist_granamericas && cp -a unique/granamericas/. . && vite build && mv dist dist_granamericas",
-    "build": "npm run build --ws && npm run build:metropol && npm run build:subus && npm run build:redbus && npm run build:voy && npm run build:conecta && npm run build:granamericas",
+    "build": "npm run build --ws && npm run build:redbus",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
