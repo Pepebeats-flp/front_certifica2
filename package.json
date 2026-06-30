@@ -16,7 +16,8 @@
     "build:voy": "rm -rf dist_voy && cp -a unique/voy/. . && vite build && mv dist dist_voy",
     "build:conecta": "rm -rf dist_conecta && cp -a unique/conecta/. . && vite build && mv dist dist_conecta",
     "build:granamericas": "rm -rf dist_granamericas && cp -a unique/granamericas/. . && vite build && mv dist dist_granamericas",
-    "build": "npm run build --ws && npm run build:redbus",
+    "build": "npm run build:redbus",
+    "deploy:redbus": "npm run build:redbus && rm -rf dist && cp -a dist_redbus dist && firebase deploy --only hosting",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
@@ -28,6 +29,7 @@
     "@googlemaps/markermanager": "^1.0.29",
     "@quasar/extras": "^1.16.11",
     "@vueuse/core": "^10.9.0",
+    "apexcharts": "^5.15.2",
     "chart.js": "^4.4.4",
     "csv-stringify": "^6.4.6",
     "feriados": "file:local_modules/feriados",
@@ -43,7 +45,8 @@
     "sistema_componente": "file:local_modules/sistema_componente",
     "traspaso": "file:local_modules/traspaso",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "vue3-apexcharts": "^1.11.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

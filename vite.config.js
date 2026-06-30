@@ -11,7 +11,9 @@ export default defineConfig({
     vue({
       template: { transformAssetUrls },
     }),
-    quasar(),
+    quasar({
+      sassVariables: "src/css/quasar.variables.sass",
+    }),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["icons/favicon.ico", "icons/apple-touch-icon.png", "images/*.webp", "images/avatar.png", "images/google_logo.svg"],
