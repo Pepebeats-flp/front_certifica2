@@ -9,6 +9,7 @@
       search-placeholder="Buscar por patente, VIN, marca..."
       empty-icon="directions_bus"
       empty-text="No hay buses registrados"
+      :initial-search="routeSearch"
     >
       <template #top-left>
         <q-btn color="primary" icon="archive" icon-right="archive" label="Descargar" no-caps @click="exportTable" />
@@ -26,6 +27,7 @@
 <script setup>
 import SmartTable from "@/components/shared/SmartTable.vue";
 import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import { exportFile, useQuasar } from "quasar";
 import { stringify } from "csv-stringify/browser/esm/sync";
 import buses from "@/assets/json/buses.json";
@@ -95,6 +97,8 @@ const buses_arr = computed(() => {
 
 const downloading = ref([]);
 const { notify } = useQuasar();
+const route = useRoute();
+const routeSearch = route.query.search || "";
 
 const exportTable = () => {
   const content = [

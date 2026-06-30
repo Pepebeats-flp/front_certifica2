@@ -9,6 +9,7 @@
       search-placeholder="Buscar por placa, actividad..."
       empty-icon="gpp_bad"
       empty-text="Aún no hay incumplimientos registrados"
+      :initial-search="routeSearch"
     >
       <template #top-left>
         <q-btn color="dark" icon="archive" label="Histórico" :loading="loading_his" @click="exportTable" />
@@ -22,6 +23,7 @@ import SmartTable from "@/components/shared/SmartTable.vue";
 import { useIncpStore } from "@/store/incpStore";
 import { storeToRefs } from "pinia";
 import { ref, watch, shallowRef } from "vue";
+import { useRoute } from "vue-router";
 import { exportFile } from "quasar";
 import { stringify } from "csv-stringify/browser/esm/sync";
 import { useQuasar } from "quasar";
@@ -67,6 +69,8 @@ const incumple_arr = shallowRef([]);
 const { notify } = useQuasar();
 const loading = ref(true);
 const loading_his = ref(false);
+const route = useRoute();
+const routeSearch = route.query.search || "";
 
 const exportTable = async () => {
   loading_his.value = true;

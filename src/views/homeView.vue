@@ -289,7 +289,7 @@ invoke(async () => {
 .iframe-voy iframe  { height: 85vh; }
 .iframe-redbus iframe { height: 95vh; }
 
-.home-map { height: 350px; border-radius: 8px; margin-top: 8px; }
+.home-map { height: 350px; border-radius: 8px; margin-top: 8px; position: relative; }
 
 @media (max-width: 700px) {
   .iframe-voy iframe  { height: 110vh; }
