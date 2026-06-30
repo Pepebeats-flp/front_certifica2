@@ -1,23 +1,18 @@
 <template>
-  <div
-    class="bg window-height window-width row justify-center items-center text-white text-h3 text-weight-medium"
-  >
-    Deslogueado
+  <div class="flex flex-center auth-page">
+    <div class="text-center">
+      <q-icon name="logout" size="64px" class="text-grey-5 q-mb-md" />
+      <div class="text-h5 text-weight-medium text-grey-8 q-mb-sm">Sesión cerrada</div>
+      <div class="text-body1 text-grey-6">Redirigiendo al inicio...</div>
+    </div>
   </div>
 </template>
 <script setup>
-import { useUserStore } from "@/store/userStore";
 import { onMounted } from "vue";
-const { clearuser } = useUserStore();
+import { useUserStore } from "@/store/userStore";
 
-onMounted(() => {
-  clearuser();
-});
+onMounted(() => useUserStore().clearuser());
 </script>
 <style lang="scss" scoped>
-.bg {
-  background: url("/images/lock.webp") no-repeat fixed center bottom;
-  background-size: cover;
-  height: 100vh;
-}
+.auth-page { min-height: 100vh; background: var(--color-background); }
 </style>

@@ -1,22 +1,20 @@
 <template>
-  <div
-    class="bg window-height window-width row justify-center items-center text-white text-h3 text-weight-medium"
-  >
-    No encontrado
+  <div class="flex flex-center auth-page">
+    <div class="text-center">
+      <q-icon name="error_outline" size="64px" class="text-grey-5 q-mb-md" />
+      <div class="text-h5 text-weight-medium text-grey-8 q-mb-sm">Página no encontrada</div>
+      <div class="text-body1 text-grey-6 q-mb-lg">Redirigiendo al inicio...</div>
+      <q-btn color="primary" label="Ir al inicio" to="/home" no-caps />
+    </div>
   </div>
 </template>
 <script setup>
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+
 const router = useRouter();
-onMounted(() => {
-  setTimeout(() => router.push({ name: "home" }), 4000);
-});
+onMounted(() => setTimeout(() => router.push({ name: "home" }), 4000));
 </script>
 <style lang="scss" scoped>
-.bg {
-  background: url("/images/lock.webp") no-repeat fixed center bottom;
-  background-size: cover;
-  height: 100vh;
-}
+.auth-page { min-height: 100vh; background: var(--color-background); }
 </style>

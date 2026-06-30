@@ -46,6 +46,7 @@
     <div class="home-charts">
       <q-card v-if="showDashboard" class="home-card home-card-full">
         <q-card-section>
+          <div class="text-subtitle1 text-weight-medium text-grey-8 q-mb-sm">Dashboard</div>
           <div class="iframe-container" :class="`iframe-${client}`">
             <iframe
               :src="hdasboard_link"
@@ -256,11 +257,11 @@ invoke(async () => {
     const terminal = terminales_map.get(depo);
     if (!terminal) continue;
     new google.maps.Circle({
-      strokeColor: "#943126",
-      strokeOpacity: 0.8,
+      strokeColor: "#ef4444",
+      strokeOpacity: 0.7,
       strokeWeight: 2,
-      fillColor: "#943126",
-      fillOpacity: 0.35,
+      fillColor: "#ef4444",
+      fillOpacity: 0.2,
       map,
       center: { lat: terminal[2], lng: terminal[1] },
       radius: Math.sqrt(indicadores.eg_noaprobado_depo[depo]) * 1000,
@@ -271,11 +272,11 @@ invoke(async () => {
     const terminal = terminales_map.get(depo);
     if (!terminal) continue;
     new google.maps.Circle({
-      strokeColor: "#5b2c6f",
-      strokeOpacity: 0.8,
+      strokeColor: "#8b5cf6",
+      strokeOpacity: 0.7,
       strokeWeight: 2,
-      fillColor: "#5b2c6f",
-      fillOpacity: 0.35,
+      fillColor: "#8b5cf6",
+      fillOpacity: 0.2,
       map,
       center: { lat: terminal[2], lng: terminal[1] },
       radius: Math.sqrt(indicadores.it_noaprobado_depo[depo]) * 1000,
@@ -338,6 +339,9 @@ invoke(async () => {
   border-radius: 12px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: box-shadow var(--transition-fast);
+  &:hover { box-shadow: var(--shadow-md); }
 }
 
 .home-card-full {
@@ -363,6 +367,7 @@ invoke(async () => {
 .home-map {
   height: 350px;
   border-radius: 8px;
+  margin-top: 8px;
 }
 
 @media (max-width: 700px) {
