@@ -25,14 +25,14 @@
         <div class="row items-center q-gutter-xs">
           <q-btn flat round dense class="header-btn">
             <q-avatar size="30px" color="primary" text-color="white" class="text-weight-medium">
-              <q-icon v-if="!name" name="person" size="20px" />
+              <q-icon v-if="initials === '?'" name="person" size="20px" />
               <span v-else>{{ initials }}</span>
             </q-avatar>
             <q-menu anchor="bottom right" self="top right" :offset="[0, 8]">
               <q-list style="min-width: 200px">
                 <q-item class="q-px-md q-py-sm">
                   <q-item-section avatar>
-                    <q-avatar color="primary" text-color="white" size="40px" class="text-weight-medium"><q-icon v-if="!name" name="person" size="24px" /><span v-else>{{ initials }}</span></q-avatar>
+                    <q-avatar color="primary" text-color="white" size="40px" class="text-weight-medium"><q-icon v-if="initials === '?'" name="person" size="24px" /><span v-else>{{ initials }}</span></q-avatar>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-weight-medium">{{ name }}</q-item-label>
