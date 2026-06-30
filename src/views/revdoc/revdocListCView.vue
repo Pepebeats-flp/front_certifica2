@@ -1,203 +1,59 @@
 <template>
-  <div class="q-pa-md">
-    <q-table
-      title="Registros"
+  <div>
+    <SmartTable
       :rows="mantenimiento_correctivo_arr"
       :columns="columns"
-      :filter="filter"
       row-key="uuid"
-      class="q-ma-md"
       :loading="loading"
-      :pagination="pagination"
-      :visible-columns="visible_cols"
-      :rows-per-page-options="[0]"
-      no-data-label="No se han encontrado registros"
-      no-results-label="No se encuentran resultados para búsqueda"
-      loading-label="Cargando.."
+      persist-key="revdocc-list"
+      search-placeholder="Buscar..."
+      empty-icon="handyman"
+      empty-text="No hay mantenimientos correctivos registrados"
     >
-      <template v-slot:top>
-        <q-btn
-          color="primary"
-          to="/revdocC/add"
-          label="Agregar"
-          class="q-mr-sm"
-        />
-        <q-btn
-          color="dark"
-          label="Histórico"
-          class="q-mr-sm"
-          @click="onDownload"
-          :loading="loading_his"
-        />
-        <q-space />
-        <q-input
-          debounce="500"
-          dense
-          v-model="filter"
-          label="Filtrar"
-          type="search"
-          style="max-width: 50%"
-          input-class="text-uppercase"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
+      <template #top-left>
+        <q-btn color="primary" to="/revdocC/add" label="Agregar" class="q-mr-sm" />
+        <q-btn color="dark" label="Histórico" class="q-mr-sm" @click="onDownload" :loading="loading_his" />
       </template>
-      <template v-slot:no-data="{ message }">
-        <div class="full-width row flex-center text-accent q-gutter-sm">
-          <q-icon size="2em" name="sentiment_dissatisfied" />
-          <span> {{ message }} </span>
-        </div>
+      <template #empty-action>
+        <q-btn color="primary" to="/revdocC/add" label="Crear registro" />
       </template>
-    </q-table>
+    </SmartTable>
   </div>
 </template>
+
 <script setup>
 import { useMcorrStore } from "@/store/mcorrStore";
 import { storeToRefs } from "pinia";
 import { ref, watch, shallowRef } from "vue";
 import { getStorage, ref as fref, getDownloadURL } from "firebase/storage";
 import { client } from "@/client";
+import SmartTable from "@/components/shared/SmartTable.vue";
 
-const visible_cols = [
-  "unidad_negocio",
-  "uuid",
-  "placa_patente",
-  "tipo_servicio",
-  "sistema_componente",
-  "causa_origen",
-  "ot_numero",
-  "ot_apertura_fecha",
-  "ot_apertura_hora",
-  "ot_cierre_fecha",
-  "ot_cierre_hora",
-  "taller_planta",
-  "km_ejecucion",
-  "pauta_ejecutada",
-  "cantidad_trepuestos",
-  "cantidad_tinsumos",
-  "observacion",
-];
 const columns = [
-  {
-    name: "unidad_negocio",
-    label: "Unidad Negocio",
-    field: "unidad_negocio",
-    align: "center",
-  },
-  {
-    name: "uuid",
-    label: "ID",
-    field: "uuid",
-    align: "center",
-  },
-  {
-    name: "placa_patente",
-    label: "Placa Patente",
-    field: "placa_patente",
-    align: "center",
-  },
-  {
-    name: "tipo_servicio",
-    label: "Tipo Servicio",
-    field: "tipo_servicio",
-    align: "center",
-  },
-  {
-    name: "sistema_componente",
-    label: "Sistema / Componente",
-    field: "sistema_componente",
-    align: "center",
-  },
-  {
-    name: "causa_origen",
-    label: "Causa / Origen",
-    field: "causa_origen",
-    align: "center",
-  },
-  {
-    name: "ot_numero",
-    label: "Numero OT",
-    field: "ot_numero",
-    align: "center",
-  },
-  {
-    name: "ot_apertura_fecha",
-    label: "Fecha Apertura",
-    field: "ot_apertura_fecha",
-    align: "center",
-  },
-  {
-    name: "ot_apertura_hora",
-    label: "Hora Apertura",
-    field: "ot_apertura_hora",
-    align: "center",
-  },
-  {
-    name: "ot_cierre_fecha",
-    label: "Fecha Cierre",
-    field: "ot_cierre_fecha",
-    align: "center",
-  },
-  {
-    name: "ot_cierre_hora",
-    label: "Hora Cierre",
-    field: "ot_cierre_hora",
-    align: "center",
-  },
-  {
-    name: "taller_planta",
-    label: "Taller / Planta",
-    field: "taller_planta",
-    align: "center",
-  },
-  {
-    name: "km_ejecucion",
-    label: "Km Ejecución",
-    field: "km_ejecucion",
-    align: "center",
-  },
-  {
-    name: "pauta_ejecutada",
-    label: "Pauta Ejecutada",
-    field: "pauta_ejecutada",
-    align: "center",
-  },
-  {
-    name: "cantidad_trepuestos",
-    label: "Cantidad Tipos Repuestos",
-    field: (row) => row.repuestos?.length,
-    align: "center",
-  },
-  {
-    name: "cantidad_tinsumos",
-    label: "Cantidad Tipos Insumos",
-    field: (row) => row.insumos?.length,
-    align: "center",
-  },
-  {
-    name: "observacion",
-    label: "Observación",
-    field: "observacion",
-    align: "center",
-  },
-  {
-    name: "fecha_creacion_timestamp",
-    field: "fecha_creacion_timestamp",
-  },
+  { name: "unidad_negocio", label: "UN", field: "unidad_negocio", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "unidad_servicio", label: "US", field: "unidad_servicio", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "uuid", label: "ID", field: "uuid", align: "center", responsive: ["sm", "md", "lg", "xl"], width: "90px" },
+  { name: "placa_patente", label: "Placa Patente", field: "placa_patente", align: "center", sortable: true, width: "110px", style: "font-weight: 700; letter-spacing: 0.5px;", headerStyle: "font-weight: 700;" },
+  { name: "tipo_servicio", label: "Tipo Servicio", field: "tipo_servicio", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "sistema_componente", label: "Sistema / Componente", field: "sistema_componente", align: "center" },
+  { name: "causa_origen", label: "Causa / Origen", field: "causa_origen", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "ot_numero", label: "Numero OT", field: "ot_numero", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "ot_apertura_fecha", label: "Fecha Apertura", field: "ot_apertura_fecha", align: "center", responsive: ["sm", "md", "lg", "xl"] },
+  { name: "ot_apertura_hora", label: "Hora Apertura", field: "ot_apertura_hora", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "ot_cierre_fecha", label: "Fecha Cierre", field: "ot_cierre_fecha", align: "center", responsive: ["sm", "md", "lg", "xl"] },
+  { name: "ot_cierre_hora", label: "Hora Cierre", field: "ot_cierre_hora", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "taller_planta", label: "Taller / Planta", field: "taller_planta", align: "center", responsive: ["lg", "xl"] },
+  { name: "km_ejecucion", label: "Km Ejecución", field: "km_ejecucion", align: "center", responsive: ["lg", "xl"] },
+  { name: "pauta_ejecutada", label: "Pauta Ejecutada", field: "pauta_ejecutada", align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "cantidad_trepuestos", label: "Cantidad Tipos Repuestos", field: (row) => row.repuestos?.length, align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "cantidad_tinsumos", label: "Cantidad Tipos Insumos", field: (row) => row.insumos?.length, align: "center", responsive: ["md", "lg", "xl"] },
+  { name: "observacion", label: "Observación", field: "observacion", align: "center" },
+  { name: "fecha_creacion_timestamp", field: "fecha_creacion_timestamp" },
 ];
-const pagination = ref({
-  sortBy: "fecha_creacion_timestamp",
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-});
 
 const { m_mant_corr_change } = storeToRefs(useMcorrStore());
 const { getall } = useMcorrStore();
 const mantenimiento_correctivo_arr = shallowRef([]);
-const filter = ref("");
 const loading = ref(true);
 const loading_his = ref(false);
 
@@ -209,14 +65,10 @@ watch(
   },
   { immediate: true }
 );
+
 const onDownload = async () => {
   loading_his.value = true;
-  const url = await getDownloadURL(
-    fref(
-      getStorage(),
-      `revision_documental/mantenimiento_correctivo_${client}.csv`
-    )
-  );
+  const url = await getDownloadURL(fref(getStorage(), `revision_documental/mantenimiento_correctivo_${client}.csv`));
   window.location.href = url;
   loading_his.value = false;
 };
