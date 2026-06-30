@@ -1,76 +1,68 @@
 <template>
-  <div class="bg text-center">
-    <q-btn
-      class="q-ma-md"
-      color="black"
-      label="Iniciar con Google"
-      @click="login"
-    />
-    <q-btn
-      class="q-ma-md"
-      color="purple"
-      label="Iniciar con Email"
-      @click="dialog = true"
-    />
-  </div>
-  <q-dialog v-model="dialog" transition-show="scale" transition-hide="scale">
-    <q-card bordered class="q-ma-md">
-      <q-form @submit="login_email" autocomplete="off">
-        <q-card-section>
-          <q-input
-            v-model="email"
-            label="EMAIL"
-            type="email"
-            :rules="[
-              (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-              (val) =>
-                /.+@SLARED.CL$/.test(val.toUpperCase()) || 'Email invalido',
-            ]"
-            dense
-            input-class="text-uppercase"
-            :readonly="submited"
-            lazy-rules
-          >
-            <template v-slot:before>
-              <q-icon name="person" />
-            </template>
-          </q-input>
-          <q-input
-            v-model="password"
-            label="PASSWORD"
-            :rules="[
-              (val) => (val && val.length > 0) || 'Este campo es obligatorio.',
-            ]"
-            :type="isPwd ? 'password' : 'text'"
-            dense
-            input-class="text-uppercase"
-            :readonly="submited"
-            lazy-rules
-          >
-            <template v-slot:before>
-              <q-icon name="key" />
-            </template>
-            <template v-slot:append>
-              <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwd = !isPwd"
-              />
-            </template>
-          </q-input>
+  <div class="login-root flex flex-center">
+    <div class="login-card q-pa-xl">
+      <div class="text-center q-mb-lg">
+        <q-icon name="directions_bus" size="56px" class="text-primary q-mb-md" />
+        <div class="text-h4 text-weight-bold">Certifica</div>
+        <div class="text-subtitle1 text-grey-6 q-mt-sm">Sistema de gestión de flota</div>
+      </div>
+
+      <div class="q-gutter-md q-mt-lg">
+        <q-btn
+          unelevated color="dark" size="lg"
+          label="Iniciar con Google"
+          icon="img:/images/google_logo.svg"
+          class="full-width login-btn"
+          @click="login"
+        />
+        <q-btn
+          outline color="primary" size="lg"
+          label="Iniciar con Email"
+          icon="mail"
+          class="full-width login-btn"
+          @click="dialog = true"
+        />
+      </div>
+
+      <div class="text-center q-mt-lg">
+        <span class="text-caption text-grey-6">Acceso exclusivo @SLARED.CL</span>
+      </div>
+    </div>
+
+    <q-dialog v-model="dialog" transition-show="scale" transition-hide="scale">
+      <q-card style="width: 380px; max-width: 90vw" class="radius-lg">
+        <q-card-section class="q-pb-none">
+          <div class="text-h6 text-weight-medium">Iniciar sesión</div>
         </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            label="Iniciar"
-            type="submit"
-            color="black"
-            :loading="submited"
-          />
-        </q-card-actions>
-      </q-form>
-    </q-card>
-  </q-dialog>
+        <q-form @submit="login_email" autocomplete="off">
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="email" label="Email" type="email" outlined
+              :rules="[(val) => (val && val.length > 0) || 'Requerido', (val) => /.+@SLARED\.CL$/.test(val.toUpperCase()) || 'Debe ser @slared.cl']"
+              input-class="text-uppercase" :readonly="submited" lazy-rules
+            >
+              <template #prepend><q-icon name="person" /></template>
+            </q-input>
+            <q-input
+              v-model="password" label="Contraseña" :type="isPwd ? 'password' : 'text'" outlined
+              :rules="[(val) => (val && val.length > 0) || 'Requerido']" :readonly="submited" lazy-rules
+            >
+              <template #prepend><q-icon name="key" /></template>
+              <template #append>
+                <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
+              </template>
+            </q-input>
+          </q-card-section>
+          <q-card-actions align="right" class="q-px-md q-pb-md">
+            <q-btn flat label="Cancelar" color="grey" v-close-popup :disable="submited" />
+            <q-btn unelevated label="Iniciar" type="submit" color="primary" :loading="submited" />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
+
 <script setup>
 import { useUserStore } from "@/store/userStore";
 import {
@@ -84,6 +76,7 @@ import { useQuasar } from "quasar";
 import { client } from "@/client";
 import { useRouter } from "vue-router";
 import { auth } from "@/firebase";
+
 const { setuser } = useUserStore();
 const { notify } = useQuasar();
 const dialog = ref(false);
@@ -113,7 +106,9 @@ const login = () => {
       console.log(error);
     });
 };
+
 const login_email = () => {
+  submited.value = true;
   signInWithEmailAndPassword(auth, email.value, password.value)
     .then((authResult) => {
       authResult.user.getIdTokenResult().then((tokenResult) => {
@@ -136,6 +131,7 @@ const login_email = () => {
       });
     })
     .catch(() => {
+      submited.value = false;
       notify({
         color: "red-6",
         textColor: "white",
@@ -146,10 +142,26 @@ const login_email = () => {
     });
 };
 </script>
+
 <style lang="scss" scoped>
-.bg {
-  background: url("/images/lock.webp") no-repeat fixed center bottom;
-  background-size: cover;
-  height: 100vh;
+.login-root {
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+.login-card {
+  width: 420px;
+  max-width: 90vw;
+}
+
+.login-btn {
+  height: 52px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.radius-lg {
+  border-radius: 12px;
 }
 </style>
