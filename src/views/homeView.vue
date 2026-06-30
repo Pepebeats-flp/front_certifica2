@@ -3,8 +3,6 @@
     <div class="col-12 flex justify-center">
       <q-card v-if="showDashboard" bordered class="my-card-double q-ma-md text-center">
         <q-card-section>
-          <div class="text-h6">Dashboard Cumplimiento</div>
-
           <div class="iframe-container" :class="`iframe-${client}`">
             <iframe
               :src="hdasboard_link"
