@@ -1,0 +1,29 @@
+// Breakpoint variables (aligned with useBreakpoint composable)
+$bp-xs: 600px;
+$bp-tablet: 768px;
+$bp-sm: 1024px;
+$bp-md: 1440px;
+$bp-lg: 1920px;
+
+// Mixins
+@mixin xs {
+  @media (max-width: ($bp-xs - 1px)) { @content; }
+}
+
+@mixin tablet {
+  @media (max-width: ($bp-tablet - 1px)) { @content; }
+}
+
+@mixin sm {
+  @media (max-width: ($bp-sm - 1px)) { @content; }
+}
+
+@mixin md {
+  @media (max-width: ($bp-md - 1px)) { @content; }
+}
+
+// Convenience aliases
+@mixin phone { @include xs { @content; } }
+@mixin mobile { @include sm { @content; } }
+@mixin tablet-only { @media (min-width: $bp-xs) and (max-width: ($bp-sm - 1px)) { @content; } }
+@mixin desktop { @media (min-width: $bp-sm) { @content; } }

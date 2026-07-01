@@ -15,7 +15,6 @@ const firebaseConfig = {
   storageBucket: "slared.appspot.com",
   messagingSenderId: "849996692636",
   appId: "1:849996692636:web:3aadc2a63bf28a45038159",
-  measurementId: "G-LJLLYMGWT2",
 };
 
 // Initialize Firebase

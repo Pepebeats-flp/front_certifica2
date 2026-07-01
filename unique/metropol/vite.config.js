@@ -19,8 +19,8 @@ export default defineConfig({
         name: "Metropol Certifica",
         short_name: "Metropol Certifica",
         description: "Metropol Certifica",
-        theme_color: "#000000",
-        background_color: "#000000",
+        theme_color: "#b91c1c",
+        background_color: "#fafafa",
         icons: [
           {
             src: "icons/android-chrome-192x192.png",
@@ -58,6 +58,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/styles/_responsive" as *;\n`,
+      },
     },
   },
   define: {

@@ -509,4 +509,10 @@ router.beforeEach((to) => {
   if (to.meta.requiresAuth && !uid) return "/login";
 });
 
+router.afterEach((to) => {
+  if (window.gtag) {
+    gtag("config", "G-8H3LEL4CLD", { page_path: to.fullPath });
+  }
+});
+
 export default router;

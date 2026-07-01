@@ -129,7 +129,7 @@ xdw
     </q-card>
   </q-form>
   <q-dialog v-model="repuesto_dialog">
-    <q-card style="min-width: 350px">
+    <q-card style="min-width: 350px; max-width: 90vw">
       <q-card-section class="bg-primary text-white">
         <div class="text-h6">Repuesto</div>
       </q-card-section>

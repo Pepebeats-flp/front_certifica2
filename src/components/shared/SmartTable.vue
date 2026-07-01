@@ -6,6 +6,36 @@
       </div>
       <q-space />
       <div class="row items-center q-gutter-xs">
+        <q-btn-dropdown
+          v-if="toggleableColumns.length > 0"
+          dense outline
+          color="grey-7"
+          icon="view_column"
+          size="md"
+          label="Columnas"
+        >
+          <q-list dense style="min-width: 200px; max-height: 400px; overflow-y: auto">
+            <q-item clickable v-close-popup @click="showAllColumns">
+              <q-item-section>Mostrar todas</q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="hideAllColumns">
+              <q-item-section>Ocultar todas</q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item v-for="col in toggleableColumns" :key="col.name" tag="label" dense>
+              <q-item-section>
+                <q-item-label>{{ col.label }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle
+                  :model-value="!hiddenColumns.has(col.name)"
+                  @update:model-value="toggleColumn(col.name)"
+                  dense
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
         <q-input
           v-if="searchable && !isMobile"
           v-model="filterText"
@@ -103,7 +133,7 @@
       <div class="st-table-card" :class="{ 'st-table-card-mobile': isMobile }">
       <q-table
         :rows="filteredRows"
-        :columns="columns"
+        :columns="visibleColumns"
         :filter="filterText"
         :filter-method="customFilter"
         :row-key="rowKey"
@@ -405,6 +435,45 @@ const colFilterTarget = ref(null);
 const activeFilterCol = ref(null);
 const colFilterSearch = ref("");
 
+const hiddenColumns = ref(new Set());
+const toggleableColumns = computed(() =>
+  props.columns.filter((c) => c.name !== "actions")
+);
+const visibleColumns = computed(() =>
+  props.columns.filter((c) => !hiddenColumns.value.has(c.name))
+);
+
+function toggleColumn(name) {
+  const cur = new Set(hiddenColumns.value);
+  if (cur.has(name)) cur.delete(name);
+  else cur.add(name);
+  hiddenColumns.value = cur;
+}
+
+function showAllColumns() {
+  hiddenColumns.value = new Set();
+}
+
+function hideAllColumns() {
+  hiddenColumns.value = new Set(toggleableColumns.value.map((c) => c.name));
+}
+
+if (props.persistKey) {
+  try {
+    const saved = localStorage.getItem(`st-hidden-${props.persistKey}`);
+    if (saved) hiddenColumns.value = new Set(JSON.parse(saved));
+  } catch {}
+  watch(hiddenColumns, (val) => {
+    localStorage.setItem(`st-hidden-${props.persistKey}`, JSON.stringify([...val]));
+  }, { deep: true });
+}
+
+watch(hiddenColumns, (newVal) => {
+  for (const name of newVal) {
+    if (colFilters[name]) delete colFilters[name];
+  }
+});
+
 if (typeof document !== "undefined") {
   colFilterTarget.value = document.body;
 }
@@ -461,7 +530,7 @@ const hasColFilter = (name) => {
 const clearColFilter = () => { if (activeFilterCol.value) colFilters[activeFilterCol.value.name] = []; colFilterMenu.value = false; };
 const clearAllFilters = () => { for (const k in colFilters) colFilters[k] = []; };
 
-const chipColumns = computed(() => props.columns.filter((c) => c.chip));
+const chipColumns = computed(() => visibleColumns.value.filter((c) => c.chip));
 const hasActions = computed(() => props.columns.some((c) => c.name === "actions"));
 const reservedSlots = ["loading", "no-data", "no-results", "top", "top-left", "top-right", "body-cell-actions", "header-cell", "empty-action"];
 
@@ -500,13 +569,13 @@ const customFilter = (rows, terms, cols) => {
   });
 };
 
-const filteredRows = computed(() => props.rows ? customFilter(props.rows, filterText.value, props.columns) : []);
+const filteredRows = computed(() => props.rows ? customFilter(props.rows, filterText.value, visibleColumns.value) : []);
 const onRequest = (req) => { pagination.value = req.pagination; };
 
 const mobileTitleCol = computed(() => {
-  const placa = props.columns.find((c) => c.name === "placa_patente");
+  const placa = visibleColumns.value.find((c) => c.name === "placa_patente");
   if (placa) return placa;
-  return props.columns.find((c) =>
+  return visibleColumns.value.find((c) =>
     c.name !== "actions" && !c.chip && c.name !== "uuid"
   );
 });
@@ -518,7 +587,7 @@ const mobileTitleVal = (row) => {
   return col.format ? col.format(raw, row) : (raw || "—");
 };
 
-const mobileChipCols = computed(() => props.columns.filter((c) => c.chip));
+const mobileChipCols = computed(() => visibleColumns.value.filter((c) => c.chip));
 
 const expandedMobileRows = ref([]);
 
@@ -529,7 +598,7 @@ const toggleMobileExpand = (key) => {
 };
 
 const mobileFieldsAll = computed(() => {
-  return props.columns.filter((c) =>
+  return visibleColumns.value.filter((c) =>
     c.name !== "actions" && !c.chip && c !== mobileTitleCol.value && c.name !== "uuid"
   );
 });
@@ -556,11 +625,11 @@ const mobileSortBy = ref(null);
 const mobileSortDesc = ref(false);
 
 const sortableColumns = computed(() =>
-  props.columns.filter((c) => c.name !== "actions" && c.sortable !== false)
+  visibleColumns.value.filter((c) => c.name !== "actions" && c.sortable !== false)
 );
 
 const filterableColumns = computed(() =>
-  props.columns.filter((c) => c.name !== "actions")
+  visibleColumns.value.filter((c) => c.name !== "actions")
 );
 
 const openColFilterMobile = (col) => {
@@ -840,17 +909,20 @@ const onResizeEnd = () => {
   100% { background-position: -200% 0; }
 }
 
-@media (max-width: 599px) {
+@include xs {
   .st-table-wrapper { padding: 0 8px 12px !important; }
   .st-toolbar { padding: 12px 12px 0 !important; flex-wrap: wrap; gap: 8px; }
+  .st-toolbar :deep(.q-btn-dropdown) { font-size: 13px; }
 
   .st-table-wrapper :deep(th) { padding: 8px; }
   .st-table-wrapper :deep(td) { padding: 6px 8px; font-size: 12.5px; }
+
+  .st-mobile-card-body { grid-template-columns: 1fr; }
 }
 
 .st-mobile-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 10px;
   padding: 8px 0;
   width: 100%;

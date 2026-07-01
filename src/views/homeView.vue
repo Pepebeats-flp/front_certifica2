@@ -291,11 +291,12 @@ invoke(async () => {
 
 .home-map { height: 350px; border-radius: 8px; margin-top: 8px; position: relative; }
 
-@media (max-width: 700px) {
-  .iframe-voy iframe  { height: 110vh; }
-  .iframe-redbus iframe { height: 175vh; }
+@include tablet {
+  .iframe-voy iframe  { height: 95vh; }
+  .iframe-redbus iframe { height: 130vh; }
   .home-page { padding: 12px !important; }
   .home-search-input :deep(.q-field__control) { height: 48px; }
   .home-search-input :deep(.q-field__native) { font-size: 14px; }
+  .home-map { height: 220px; }
 }
 </style>

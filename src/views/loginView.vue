@@ -1,22 +1,22 @@
 <template>
   <div class="login-root flex flex-center">
-    <div class="login-card q-pa-xl">
+    <div class="login-card q-pa-md q-pb-xl">
       <div class="text-center q-mb-lg">
-        <q-icon name="directions_bus" size="56px" class="text-primary q-mb-md" />
+        <q-icon name="directions_bus" size="48px" class="text-primary q-mb-md" />
         <div class="text-h4 text-weight-bold">Certifica</div>
-        <div class="text-subtitle1 text-grey-6 q-mt-sm">Sistema de gestión de flota</div>
+        <div class="text-subtitle1 text-grey-6 q-mt-sm">Sistema de gestion de flota</div>
       </div>
 
       <div class="q-gutter-md q-mt-lg">
         <q-btn
-          unelevated color="dark" size="lg"
+          unelevated color="dark"
           label="Iniciar con Google"
           icon="img:/images/google_logo.svg"
           class="full-width login-btn"
           @click="login"
         />
         <q-btn
-          outline color="primary" size="lg"
+          outline color="primary"
           label="Iniciar con Email"
           icon="mail"
           class="full-width login-btn"
@@ -117,8 +117,16 @@ const login_email = () => {
 </script>
 
 <style lang="scss" scoped>
-.login-root { min-height: 100vh; background: var(--color-background); }
-.login-card { width: 420px; max-width: 90vw; }
-.login-btn { height: 52px; border-radius: 12px; font-size: 15px; font-weight: 500; }
+.login-root { min-height: 100vh; background: var(--color-background); padding: 16px; }
+.login-card { width: 420px; max-width: 92vw; }
+.login-btn { min-height: 52px; border-radius: 12px; font-size: 15px; font-weight: 500; }
+.login-btn :deep(.q-btn__content) { gap: 10px; }
+.google-icon { flex-shrink: 0; }
 .radius-lg { border-radius: 12px; }
+
+@include xs {
+  .login-root { padding: 12px; }
+  .login-card { width: 100%; max-width: 100%; }
+  .login-btn { min-height: 56px; font-size: 14px; }
+}
 </style>

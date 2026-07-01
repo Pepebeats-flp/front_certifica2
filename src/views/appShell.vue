@@ -241,8 +241,8 @@
           <q-item-section>Informes</q-item-section>
         </q-item>
 
-        <div v-if="menuMatch('Indicadores','Est. Certificación','Incumplimiento','Seguimiento','Sinóptico','Dashboard') || !menuSearch" class="nav-sep" />
-        <q-item-label v-if="menuMatch('Indicadores','Est. Certificación','Incumplimiento','Seguimiento','Sinóptico','Dashboard') || !menuSearch" header class="nav-section-header">Análisis</q-item-label>
+        <div v-if="menuMatch('Indicadores','Est. Certificación','Incumplimiento','Seguimiento','Sinóptico') || !menuSearch" class="nav-sep" />
+        <q-item-label v-if="menuMatch('Indicadores','Est. Certificación','Incumplimiento','Seguimiento','Sinóptico') || !menuSearch" header class="nav-section-header">Análisis</q-item-label>
 
         <q-expansion-item
           v-if="showMenu() && menuMatch('Indicadores','Est. Certificación','Incumplimiento')"
@@ -275,12 +275,6 @@
             <q-item-section>Sinóptico</q-item-section>
           </q-item>
         </q-expansion-item>
-
-        <q-item v-if="showMenu() && menuMatch('Dashboard')" clickable v-ripple tag="a" :href="dashboard_link" target="_blank" class="nav-item">
-          <q-item-section avatar><q-icon name="dashboard" size="22px" /></q-item-section>
-          <q-item-section>Dashboard</q-item-section>
-          <q-item-section side><q-icon name="open_in_new" size="16px" color="grey-6" /></q-item-section>
-        </q-item>
 
         <q-separator class="q-my-md" />
         <q-item clickable v-ripple to="/logout" class="nav-item text-grey-6">
@@ -327,7 +321,7 @@ import { useRepresStore } from "@/store/represStore";
 import { useIndicadorStore } from "@/store/indicaStore";
 import { useTraspStore } from "@/store/traspStore";
 import { useTraspmStore } from "@/store/traspmStore";
-import { dashboard_link, client } from "@/client";
+import { client } from "@/client";
 import { useBreakpoint } from "@/composables/useBreakpoint";
 import { useTheme } from "@/composables/useTheme";
 import { useViewToggle } from "@/composables/useViewToggle";
@@ -474,6 +468,13 @@ onUnmounted(() => {
 
   :deep(.q-toolbar) {
     min-height: 60px;
+    flex-wrap: wrap;
+  }
+}
+
+@include xs {
+  .header-breadcrumbs :deep(.q-breadcrumbs__el) {
+    font-size: 13px;
   }
 }
 

@@ -43,7 +43,7 @@
       </div>
     </q-dialog>
     <q-dialog v-model="dialog_del" transition-show="scale" transition-hide="scale" persistent>
-      <q-card style="min-width: 400px">
+      <q-card style="min-width: 400px; max-width: 90vw">
         <q-card-section>
           <div class="text-h6">¿Eliminar solicitud?</div>
         </q-card-section>
