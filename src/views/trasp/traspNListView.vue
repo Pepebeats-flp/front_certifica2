@@ -39,7 +39,6 @@
     <q-dialog v-model="dialog_repair" transition-show="scale" transition-hide="scale" persistent>
       <q-card>
         <q-form @submit="onCRepair()">
-          <q-linear-progress :value="1.0" color="primary" />
           <q-card-section class="row items-center no-wrap">
             <div>
               <div class="row">

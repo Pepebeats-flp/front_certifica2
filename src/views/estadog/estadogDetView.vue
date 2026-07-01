@@ -2,126 +2,131 @@
   <q-form @submit="onSubmit()">
     <q-card bordered class="q-ma-md">
       <q-card-section class="bg-primary text-white">
-        <div class="text-h6">Criterios</div>
+        <div class="row items-center">
+          <div class="text-h6">Criterios</div>
+          <q-space />
+          <q-badge color="white" text-color="primary" :label="`${group.length} / ${options_list.length}`" />
+        </div>
       </q-card-section>
-      <q-card-section>
-        <q-option-group :options="options_list" type="checkbox" v-model="group" @update:model-value="onUpdate()" :disable="view" />
-        <q-separator color="transparent" />
+      <q-card-section class="q-pa-none">
+        <template v-for="(g, idx) in groupedOptions" :key="idx">
+          <div class="criteria-group-header q-px-md q-pt-md q-pb-xs">
+            <span class="text-weight-medium text-primary">{{ g.header }}</span>
+            <span class="text-caption text-grey-6 q-ml-sm">{{ g.total }} criterios</span>
+          </div>
+          <q-separator />
+          <q-option-group
+            :options="g.items"
+            type="checkbox"
+            v-model="group"
+            @update:model-value="onUpdate()"
+            :disable="view"
+            class="criteria-list q-px-md q-pb-sm"
+          />
+        </template>
       </q-card-section>
-      <q-separator color="transparent" />
     </q-card>
     <q-separator color="transparent" />
     <q-card bordered class="q-ma-md">
       <q-card-section class="bg-primary text-white">
-        <div class="text-h6">Registro Fotografico</div>
-      </q-card-section>
-      <q-card-section>
-        <div class="q-gutter-md">
-          <q-file
-            v-model="files"
-            @click="files = null"
-            label="Seleccionar fotos"
-            counter
-            multiple
-            clearable
-            accept=".jpg, image/*"
-            :readonly="isUploading"
-          >
-            <template v-slot:before>
-              <q-icon name="photo_camera" />
-            </template>
-            <template v-slot:after v-if="canUpload">
-              <q-btn color="primary" dense icon="cloud_upload" round @click="onUpload" :disable="!canUpload" :loading="isUploading" />
-            </template>
-          </q-file>
+        <div class="row items-center">
+          <div class="text-h6">Registro Fotografico</div>
+          <q-space />
+          <q-badge v-if="filenames.length" color="white" text-color="primary" :label="filenames.length" />
         </div>
       </q-card-section>
-      <q-card-section>
-        <q-scroll-area v-if="filenames.length > 0" style="height: 135px" visible>
-          <div class="row justify-center q-gutter-sm">
+      <q-card-section v-if="filenames.length > 0" class="q-pb-none">
+        <div class="photo-grid">
+          <div v-for="(filename, index) in filenames" :key="index" class="photo-item">
             <q-img
-              v-for="(filename, index) in filenames"
-              :key="filename"
               :src="filenames_new ? preurl + 'thumb_' + remExt(filename.name) + '.webp' : preurl + 'thumb_' + filename"
-              basic
-              spinner-color="primary"
-              style="max-height: 200px; max-width: 200px"
-              class="rounded-borders shadow-5"
+              basic spinner-color="primary"
+              class="photo-thumb rounded-borders"
             >
-              <div class="absolute-bottom row">
-                <q-btn v-if="!view" color="white" icon="delete" flat dense @click="deleteImage(index)" />
-                <q-space />
-                <q-btn color="white" icon="fullscreen" flat dense @click="largeImage(filename)" />
+              <div class="photo-overlay absolute-full">
+                <div class="row justify-center items-center full-height q-gutter-md">
+                  <q-btn v-if="!view" color="white" icon="delete" flat round size="sm" @click="deleteImage(index)" />
+                  <q-btn color="white" icon="fullscreen" flat round size="sm" @click="largeImage(filename)" />
+                </div>
               </div>
             </q-img>
           </div>
-        </q-scroll-area>
-        <q-separator color="transparent" />
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <q-file
+          v-model="files"
+          @click="files = null"
+          label="Seleccionar fotos"
+          counter multiple clearable
+          accept=".jpg, image/*"
+          :readonly="isUploading"
+        >
+          <template v-slot:before><q-icon name="photo_camera" /></template>
+          <template v-slot:after v-if="canUpload">
+            <q-btn color="primary" dense icon="cloud_upload" round @click="onUpload" :disable="!canUpload" :loading="isUploading" />
+          </template>
+        </q-file>
       </q-card-section>
     </q-card>
     <q-separator color="transparent" />
     <q-card bordered class="q-ma-md">
       <q-card-section class="bg-primary text-white">
-        <div class="text-h6">Resultado</div>
+        <div class="row items-center">
+          <div class="text-h6">Resultado</div>
+          <q-space />
+          <q-badge color="white" text-color="primary" :label="cumplimientoPct + '%'" />
+        </div>
       </q-card-section>
       <q-card-section>
         <q-input
           v-model="obs_inspeccion"
-          label="OBSERVACIONES"
-          dense
-          input-class="text-uppercase"
-          :readonly="view"
-          debounce="2000"
-          @update:model-value="onUpdate()"
-          autogrow
+          label="OBSERVACIONES" dense input-class="text-uppercase"
+          :readonly="view" debounce="2000"
+          @update:model-value="onUpdate()" autogrow
         >
-          <template v-slot:before>
-            <q-icon name="person" />
-          </template>
+          <template v-slot:before><q-icon name="person" /></template>
         </q-input>
       </q-card-section>
-      <q-card-section>
-        <q-markup-table>
+      <q-card-section class="q-pt-none">
+        <table class="result-table full-width">
           <thead>
             <tr>
               <th></th>
-              <th>BAJA</th>
-              <th>MEDIA</th>
-              <th>ALTA</th>
+              <th class="text-center severity-baja">BAJA</th>
+              <th class="text-center severity-media">MEDIA</th>
+              <th class="text-center severity-alta">ALTA</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="text-left">CUMPLE</td>
+            <tr class="result-row-cumple">
+              <td class="text-weight-medium">Cumple</td>
               <td class="text-center">{{ curr_lows }}</td>
               <td class="text-center">{{ curr_mediums }}</td>
               <td class="text-center">{{ curr_highs }}</td>
             </tr>
-            <tr>
-              <td class="text-left">NO CUMPLE</td>
-              <td class="text-center">
-                {{ options_low.size - curr_lows }}
-              </td>
-              <td class="text-center">
-                {{ options_medium.size - curr_mediums }}
-              </td>
-              <td class="text-center">
-                {{ options_high.size - curr_highs }}
-              </td>
+            <tr class="result-row-defectos">
+              <td class="text-weight-medium">No cumple</td>
+              <td class="text-center">{{ options_low.size - curr_lows }}</td>
+              <td class="text-center">{{ options_medium.size - curr_mediums }}</td>
+              <td class="text-center">{{ options_high.size - curr_highs }}</td>
             </tr>
-            <tr>
-              <td class="text-left">TOTAL</td>
+            <tr class="result-row-total">
+              <td class="text-weight-medium">Total</td>
               <td class="text-center">{{ options_low.size }}</td>
               <td class="text-center">{{ options_medium.size }}</td>
               <td class="text-center">{{ options_high.size }}</td>
             </tr>
           </tbody>
-        </q-markup-table>
+        </table>
+        <div v-if="defectosResumen" class="result-summary q-mt-sm text-caption text-grey-7">
+          {{ defectosResumen }}
+        </div>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn label="Guardar" @click="onGuardar()" color="secondary" :disable="view" />
-        <q-btn label="Finalizar" type="submit" @click="reprog = false" color="primary" :loading="submited" :disable="view" />
-        <q-btn v-if="!dtpm" label="Reprog" type="submit" @click="reprog = true" color="dark" :loading="submited" :disable="view" />
+        <q-btn label="Guardar" icon="save" @click="onGuardar()" color="secondary" :disable="view" />
+        <q-btn label="Finalizar" icon="check_circle" type="submit" @click="reprog = false" color="primary" :loading="submited" :disable="view" />
+        <q-btn v-if="!dtpm" label="Reprog" icon="update" type="submit" @click="reprog = true" color="dark" :loading="submited" :disable="view" />
       </q-card-actions>
     </q-card>
   </q-form>
@@ -215,11 +220,43 @@ const options_high = computed(() => {
 //let file_charged = 0;
 const certifica = ref(null);
 const canUpload = computed(() => files.value !== null);
+const cumplimientoPct = computed(() => {
+  const total = options_low.value.size + options_medium.value.size + options_high.value.size;
+  if (!total) return 0;
+  return Math.round((curr_lows.value + curr_mediums.value + curr_highs.value) / total * 100);
+});
+const defectosResumen = computed(() => {
+  const parts = [];
+  const bl = options_low.value.size - curr_lows.value;
+  const bm = options_medium.value.size - curr_mediums.value;
+  const bh = options_high.value.size - curr_highs.value;
+  if (bl) parts.push(`${bl} Baja`);
+  if (bm) parts.push(`${bm} Media`);
+  if (bh) parts.push(`${bh} Alta`);
+  return parts.length ? 'Defectos: ' + parts.join(' · ') : '';
+});
 const dialog = ref(false);
 const reprog = ref(false);
 const router = useRouter();
 const route = useRoute();
 const remExt = (fname) => fname.substring(0, fname.lastIndexOf("."));
+
+const groupedOptions = computed(() => {
+  const list = options_list.value;
+  if (!list || list.length === 0) return [];
+  const groups = {};
+  for (const opt of list) {
+    const parts = opt.value.split(/[-_]/);
+    const prefix = parts[0];
+    if (!groups[prefix]) {
+      const desc = opt.label.replace(/^\d+\.?\d*:?\s*/, '').split(' - ')[0].trim();
+      groups[prefix] = { header: `${prefix}. ${desc}`, items: [], total: 0 };
+    }
+    groups[prefix].items.push(opt);
+    groups[prefix].total++;
+  }
+  return Object.values(groups);
+});
 
 const onUpdate = () => {
   //Establecemos cumplimiento
@@ -547,17 +584,6 @@ watch(
   },
 );
 </script>
-<style scoped>
-.q-option-group :deep(.q-checkbox__bg) {
-  top: 0%;
-}
-.q-option-group :deep(.q-checkbox) {
-  align-items: unset;
-}
-.q-option-group :deep(.q-checkbox.disabled) {
-  opacity: unset !important;
-}
-.q-option-group :deep(.q-checkbox__inner--falsy) {
-  color: var(--q-negative);
-}
+<style scoped lang="scss">
+@use "@/styles/_criteria" as *;
 </style>

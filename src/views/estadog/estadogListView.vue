@@ -60,7 +60,6 @@
           <div class="text-h6">Defectos</div>
           <q-space />
           <div class="text-caption text-grey-7 q-mr-sm">{{ defectos_placa }}</div>
-          <q-btn flat round dense icon="close" v-close-popup />
         </q-card-section>
         <q-separator />
         <q-card-section>
@@ -79,7 +78,6 @@
     <q-dialog v-model="dialog_repair" transition-show="scale" transition-hide="scale" persistent>
       <q-card>
         <q-form @submit="onCRepair()">
-          <q-linear-progress :value="1.0" color="primary" />
           <q-card-section class="row items-center no-wrap">
             <div>
               <div class="row">

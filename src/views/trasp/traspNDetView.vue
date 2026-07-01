@@ -600,35 +600,6 @@ const onError = (el) => {
   });
 };
 </script>
-<style scoped>
-.q-option-group :deep(.q-checkbox__bg) {
-  top: 0%;
-}
-.q-option-group :deep(.q-checkbox) {
-  align-items: unset;
-}
-.q-option-group :deep(.q-checkbox.disabled) {
-  opacity: unset !important;
-}
-.q-option-group :deep(.q-checkbox__inner--falsy) {
-  color: var(--q-negative);
-}
-.q-checkbox :deep(.q-checkbox__bg) {
-  top: 0%;
-  align-items: unset !important;
-}
-.q-checkbox {
-  align-items: unset !important;
-}
-
-.q-checkbox :deep(.q-checkbox.disabled) {
-  opacity: unset !important;
-}
-
-.q-checkbox :deep(.q-checkbox__inner--falsy) {
-  color: var(--q-negative);
-}
-.q-checkbox :deep(.q-checkbox__inner--indet) {
-  color: var(--q-negative);
-}
+<style scoped lang="scss">
+@use "@/styles/_criteria" as *;
 </style>
