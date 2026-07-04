@@ -11,7 +11,7 @@
       empty-icon="description"
       empty-text="No hay documentos disponibles"
     >
-      <template #body-cell-acciones="{ row }">
+      <template #body-cell-actions="{ row }">
         <q-btn color="primary" icon="download" flat dense @click="onDownload(row)" :loading="downloading[row]">
           <q-tooltip>Descargar</q-tooltip>
         </q-btn>
@@ -31,7 +31,7 @@ const columns = [
   { name: "unidad_negocio", label: "Unidad Negocio", field: () => unidad_negocio, align: "center" },
   { name: "tipo", label: "Tipo", field: (row) => row[2], align: "center", sortable: true },
   { name: "descripcion", label: "Descripción", field: (row) => row[0], align: "center", sortable: true },
-  { name: "acciones", label: "Acciones", field: "", align: "center", width: "80px" },
+  { name: "actions", label: "Acciones", field: "", align: "center", width: "80px" },
 ];
 
 const documentos_arr = computed(() => documentos[unidad_negocio]);

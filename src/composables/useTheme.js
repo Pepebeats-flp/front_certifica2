@@ -7,7 +7,7 @@ const isDark = ref(false);
 function init() {
   const stored = localStorage.getItem(THEME_KEY);
   if (stored !== null) isDark.value = stored === "dark";
-  else isDark.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  else isDark.value = false;
 }
 
 function toggle() {
